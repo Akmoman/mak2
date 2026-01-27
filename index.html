@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل الدرجات والسلوك - الدراسات الاجتماعية</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50; --primary-light: #ecf0f1; --accent: #27ae60;
+            --bg-color: #f4f7f6; --white: #ffffff; --text-dark: #2c3e50;
+            --border: #dfe6e9; --error: #e74c3c; --warning: #f39c12; --info: #3498db;
+            --behavior-pos: #00b894; --behavior-neg: #d63031;
+            --enrich-color: #9b59b6;
+        }
+
+        body { font-family: 'Cairo', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: var(--text-dark); }
+
+        .container {
+            max-width: 1400px; margin: 0 auto; background: var(--white);
+            border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow: hidden; min-height: 85vh; display: flex; flex-direction: column; border: 1px solid var(--border);
+        }
+
+        /* تصميم الواجهة الرئيسية */
+        #landingPage { padding: 40px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; background: linear-gradient(to bottom, #fff, #f9fbfd); }
+        .landing-header h1 { color: var(--primary); font-size: 2.5rem; margin-bottom: 10px; }
+        .start-section { background: var(--primary-light); padding: 30px; border-radius: 15px; width: 100%; max-width: 600px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .designer-info { margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; color: #95a5a6; font-size: 0.9rem; width: 100%; }
+        .designer-name { color: var(--accent); font-weight: bold; }
+
+        /* شريط التحكم */
+        .workspace-toolbar { background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px; }
+        .toolbar-row { display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .toolbar-section-left, .toolbar-section-right { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .toolbar-section-right { margin-right: auto; }
+
+        select { padding: 8px 15px; border: 1px solid #bdc3c7; border-radius: 6px; font-family: 'Cairo', sans-serif; font-size: 1rem; background: white; }
+
+        .btn { padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: 600; color: white; display: inline-flex; align-items: center; gap: 5px; font-size: 0.9rem; transition: all 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .btn-primary { background-color: var(--primary); }
+        .btn-accent { background-color: var(--accent); }
+        .btn-danger { background-color: var(--error); }
+        .btn-warning { background-color: var(--warning); color: #2d3436; }
+        .btn-info { background-color: var(--info); }
+        .btn-purple { background-color: #9b59b6; }
+        .btn-dark { background-color: #34495e; }
+        .btn-vertical-mode { background-color: #95a5a6; color: white; }
+        .btn-vertical-mode.active { background-color: #27ae60; box-shadow: 0 0 5px #27ae60; }
+        .btn-alpha-sort { background-color: #34495e; color: white; }
+        .btn-alpha-sort.active { background-color: #00b894; box-shadow: 0 0 5px #00b894; }
+
+        .mode-switcher { display: flex; background: #dfe6e9; border-radius: 8px; padding: 3px; }
+        .mode-btn { padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; color: #636e72; background: transparent; transition: 0.3s; }
+        .mode-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .workspace { display: none; flex-direction: column; }
+        .workspace.active { display: flex; }
+
+        /* التبويبات */
+        .section-tabs-container { display: flex; gap: 5px; padding: 10px 20px 0; background: #fff; border-bottom: 2px solid #eee; overflow-x: auto; align-items: center; }
+        .tab-btn { padding: 8px 20px; background: #f1f2f6; border: 1px solid #ddd; border-bottom: none; border-radius: 8px 8px 0 0; cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; color: #7f8c8d; white-space: nowrap; position: relative; top: 2px; transition: all 0.2s; }
+        .tab-btn:hover { background: #e3e6ea; }
+        .tab-btn.active { background: #fff; color: var(--primary); border-color: #eee; border-bottom: 2px solid #fff; z-index: 2; box-shadow: 0 -3px 5px rgba(0,0,0,0.02); border-top: 3px solid var(--accent); }
+        .smart-btn { border-top: 3px solid #3498db; background: #eaf6ff; color: #2980b9; }
+        .smart-btn.active { background: #3498db; color: white; border-top-color: #2980b9; }
+        .toggle-all-btn { background: none; border: none; color: var(--info); font-weight: bold; cursor: pointer; font-size: 0.85rem; margin-left: 10px; }
+
+        /* الجدول */
+        .table-wrapper { overflow-x: auto; padding-bottom: 50px; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        thead { background-color: #ecf0f1; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        th { padding: 12px 8px; color: #2c3e50; font-weight: 700; border-bottom: 2px solid #bdc3c7; white-space: nowrap; font-size: 0.9rem; text-align: center; }
+        td { padding: 0; border-bottom: 1px solid #eee; text-align: center; height: 40px; }
+        tr:hover { background-color: #f9f9f9; }
+        tr.section-group-header td { background-color: #f8f9fa; color: var(--primary); font-weight: bold; text-align: right; padding: 8px 15px; border-top: 2px solid #dfe6e9; }
+        
+        .grade-input { width: 100%; height: 100%; border: none; text-align: center; font-family: 'Cairo', sans-serif; font-size: 1rem; background: transparent; outline: none; color: #2c3e50; transition: background 0.2s; }
+        .grade-input:focus { background-color: #e3f2fd; box-shadow: inset 0 0 0 2px var(--info); }
+        
+        .name-input-table { width: 100%; border: none; background: transparent; font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; color: #34495e; text-align: right; outline: none; }
+        .name-input-table:focus { border-bottom: 1px solid var(--primary); }
+
+        td.name-cell { text-align: right; padding-right: 8px; min-width: 180px; max-width: 220px; }
+        td.total-cell { font-weight: 800; color: var(--primary); background-color: #fdfdfd; font-size: 1.1rem; }
+        td.level-cell { font-weight: bold; color: #fff; font-size: 0.9rem; text-shadow: 0 0 2px rgba(0,0,0,0.2); }
+        td.section-cell { font-size: 0.85rem; color: #7f8c8d; }
+        
+        .btn-mini-action { background: none; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 0.75rem; padding: 1px 5px; margin-top: 2px; color: #27ae60; }
+        .btn-mini-action:hover { background-color: #eaffea; border-color: #27ae60; }
+
+        .level-A { background-color: #2ecc71; } .level-B { background-color: #1abc9c; } .level-C { background-color: #3498db; } .level-D { background-color: #f39c12; } .level-E { background-color: #e74c3c; }
+
+        /* السلوك */
+        .behavior-score { font-weight: bold; font-size: 1.1rem; }
+        .behavior-score.full-mark { color: #f1c40f !important; text-shadow: 0 0 5px rgba(241, 196, 15, 0.5); }
+        .btn-behavior { padding: 4px 10px; font-size: 0.8rem; margin: 0 2px; border-radius: 4px; border:none; cursor:pointer;}
+        .btn-pos { background-color: #e6fffa; color: #00b894; border: 1px solid #00b894; }
+        .btn-neg { background-color: #fff5f5; color: #d63031; border: 1px solid #d63031; }
+        .btn-view-log { background-color: #e3f2fd; color: #3498db; border: 1px solid #3498db; }
+        .behavior-history { font-size: 0.75rem; color: #888; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; padding:0 5px;}
+
+        /* الخطط */
+        .remedial-container, .plan-container { padding: 20px; display: none; }
+        .remedial-grid, .plan-grid { display: grid; grid-template-columns: 300px 1fr; gap: 20px; margin-bottom: 20px; }
+        .student-select-list { height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; padding: 10px; background: #fff; }
+        .student-select-item { padding: 8px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
+        .plan-details-form { background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #eee; }
+
+        /* التحليل */
+        .analysis-section { padding: 30px; border-top: 1px solid #eee; display: none; background: #fff; }
+        .stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 20px; }
+        .stat-card { background: #fdfdfd; padding: 8px; border-radius: 6px; border: 1px solid #eee; text-align: center; border-bottom-width: 3px; }
+        .stat-card h5 { margin: 0 0 5px 0; font-size: 0.85rem; color: #7f8c8d; }
+        .stat-num { font-size: 1.4rem; font-weight: bold; margin: 0; }
+        .rates-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .lists-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; padding-top: 20px; border-top: 1px dashed #dfe6e9; }
+        .list-card { border: 1px solid #eee; border-radius: 8px; padding: 15px; }
+        .student-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f5f5f5; }
+
+        /* Modals */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1500; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 25px; border-radius: 10px; width: 500px; max-width: 95%; max-height: 85vh; overflow-y: auto; } 
+        textarea { width: 100%; height: 200px; margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; resize: vertical; }
+        .behavior-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .b-btn { padding: 10px; border: 1px solid #eee; border-radius: 5px; cursor: pointer; text-align: center; transition: 0.2s; font-weight:bold; }
+        .b-btn:hover { transform: scale(1.02); }
+        .b-pos { background: #e6fffa; border-color: #b2f5ea; color: #234e52; }
+        .b-neg { background: #fff5f5; border-color: #fed7d7; color: #822727; }
+        .log-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #eee; background: #fafafa; margin-bottom: 4px; border-radius: 4px; align-items: center; }
+        .btn-delete-log { background-color: #ffeaea; color: #d63031; border: 1px solid #fab1a0; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
+        
+        #notification-area { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; }
+        .notif { padding: 10px 20px; border-radius: 5px; color: white; margin-bottom: 5px; opacity: 0; transition: 0.3s; transform: translateY(-20px); }
+        .notif.show { opacity: 1; transform: translateY(0); }
+        .notif.success { background: var(--accent); } .notif.error { background: var(--error); } .notif.info { background: var(--info); }
+
+        @media (max-width: 768px) {
+            .remedial-grid, .plan-grid { grid-template-columns: 1fr; }
+            .student-select-list { height: 200px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+
+        /* Print Styles */
+        @media print {
+            @page { size: landscape; margin: 1cm; }
+            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; zoom: 90%; }
+            .container { box-shadow: none; border: none; margin: 0; width: 100%; max-width: 100%; }
+            .workspace-toolbar, .section-tabs-container, .btn, .action-btn, #landingPage, .modal, .input-row-add, .mode-switcher, .btn-mini-action, .remedial-grid, .plan-grid { display: none !important; }
+            .workspace { display: block !important; }
+            .print-header { display: block !important; text-align: center; border-bottom: 2px solid #333; margin-bottom: 10px; padding-bottom: 5px; }
+            table { border: 1px solid #000; width: 100%; font-size: 10pt; page-break-after: always; } 
+            th, td { border: 1px solid #000; padding: 4px; color: black; text-align: center; height: auto; page-break-inside: avoid; }
+            thead { display: table-header-group; }
+            tfoot { display: table-footer-group; }
+            .print-title-row { display: table-row !important; }
+            .print-title-row th { background-color: #fff !important; border: none !important; border-bottom: 2px solid #000 !important; font-size: 1.4rem; padding: 15px; }
+            tr.section-group-header { display: table-row; }
+            tr.section-group-header td { background-color: #ddd !important; color: #000 !important; border: 1px solid #000; font-weight: bold; text-align: center; font-size: 1.2rem; }
+            td.name-cell { font-size: 9pt; font-weight: normal; min-width: auto; width: 20%; text-align: right; padding-right: 5px; }
+            .grade-input, .name-input-table { text-align: center; padding: 0; font-size: 10pt; border: none; }
+            #analysisSection { display: none !important; }
+            .analysis-print-container { display: block !important; }
+            .grade-report-page { page-break-before: always; padding: 20px; border: 1px solid #ccc; margin-bottom: 20px; }
+            .analysis-print-title { display: block; margin-bottom: 20px; text-decoration: underline; font-weight:bold; font-size:1.4rem; text-align:center;}
+            .stats-grid { grid-template-columns: repeat(6, 1fr) !important; gap: 8px; margin-bottom: 15px; }
+            .stat-card { padding: 5px; border: 1px solid #999; }
+            .stat-card h5 { font-size: 0.8rem; margin-bottom: 2px; }
+            .stat-num { font-size: 1.2rem; }
+            .rates-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+            .lists-wrapper { display: grid !important; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+            .simple-bar-chart { display: flex; height: 200px; align-items: flex-end; gap: 15px; margin-top: 20px; border-bottom: 2px solid #000; padding-bottom: 5px; width: 100%; }
+            .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+            .bar { width: 80%; border: 2px solid #000; border-bottom: none; min-height: 2px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .bar-label { font-size: 0.85rem; margin-top: 5px; text-align: center; font-weight:bold;}
+            .bar-val { font-size: 0.95rem; font-weight: bold; margin-bottom: 2px; }
+            
+            /* طباعة الخطط */
+            #remedialSection, #enrichmentSection { display: block !important; border:none; padding:0; }
+            .remedial-container, .plan-container { display: block !important; padding: 0 !important; }
+            
+            /* جدول سلوك الطباعة */
+            .behavior-log-table { width: 100%; border-collapse: collapse; margin-top: 20px; page-break-inside: avoid; }
+            .behavior-log-table th, .behavior-log-table td { border: 1px solid #ccc; padding: 8px; text-align: right; }
+            .behavior-log-table th { background: #f0f0f0; font-weight: bold; }
+            
+            .print-footer { display: flex !important; justify-content: space-between; margin-top: 30px; padding-top: 10px; border-top: 1px solid #ccc; page-break-inside: avoid; }
+            input[type="number"], input[type="text"], input[type="date"] { border: none; background: none; width: auto; appearance: textfield; }
+        }
+        .print-header, .print-footer { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="notification-area"></div>
+<input type="file" id="restoreFileInput" style="display:none;" accept=".json" onchange="restoreBackup(this)">
+
+<!-- الصفحة الرئيسية -->
+<div id="landingPage">
+    <div class="landing-header">
+        <h1 style="color:var(--primary)">سجل الدرجات الإلكتروني</h1>
+        <p>لمادة الدراسات الاجتماعية</p>
+    </div>
+
+    <div class="start-section">
+        <label style="display:block; margin-bottom:15px; font-weight:bold; color:var(--primary); font-size:1.2rem;">👇 ابدأ باختيار المرحلة الدراسية:</label>
+        <select id="landingGradeSelect" onchange="startApp(this.value)" style="width:100%; padding:15px; font-size:1.1rem; border:2px solid var(--accent); border-radius:8px;">
+            <option value="" disabled selected>-- اختر الصف --</option>
+            <optgroup label="الحلقة الثانية"><option value="5-9">الصفوف (5 - 9)</option></optgroup>
+            <optgroup label="ما بعد الأساسي"><option value="10-11">الصفوف (10 - 11)</option><option value="12">الصف (12)</option></optgroup>
+        </select>
+    </div>
+    <div class="designer-info">تصميم وبرمجة: <span style="color:var(--accent); font-weight:bold;">أ. عبدالله بن خلف الرواحي</span></div>
+</div>
+
+<!-- مساحة العمل -->
+<div id="workspace" class="workspace">
+    <div class="workspace-toolbar">
+        <div class="toolbar-row">
+            <div class="toolbar-section-left">
+                <button class="btn btn-danger" onclick="returnToMain()">🏠 خروج</button>
+                <span style="font-weight:bold; color:var(--primary); font-size:1.1rem; padding:0 10px; border-right:2px solid #ddd;" id="currentStageLabel"></span>
+                <div class="mode-switcher">
+                    <button class="mode-btn active" id="modeGradeBtn" onclick="switchMode('grades')">📊 سجل الدرجات</button>
+                    <button class="mode-btn" id="modeBehaviorBtn" onclick="switchMode('behavior')">⚖️ سجل السلوك</button>
+                    <button class="mode-btn" id="modeRemedialBtn" onclick="switchMode('remedial')">💊 الخطط العلاجية</button>
+                    <button class="mode-btn" id="modeEnrichmentBtn" onclick="switchMode('enrichment')">💎 الخطط الإثرائية</button>
+                </div>
+            </div>
+            <div class="toolbar-section-right" style="display: flex; align-items: center; gap: 5px;">
+                 <label style="font-size:0.9rem; color:#555;">📥 إدراج شعبة:</label>
+                 <select id="bulkImportSelect" onchange="importSectionStudents(this.value)" style="min-width:150px; border-color: var(--accent);"></select>
+            </div>
+        </div>
+        <div class="toolbar-row">
+            <div class="toolbar-section-left">
+                <button class="btn btn-purple" onclick="downloadBackup()">📥 حفظ نسخة</button>
+                <button class="btn btn-primary" onclick="document.getElementById('restoreFileInput').click()">📤 استعادة</button>
+                <button class="btn btn-warning" onclick="openClearModal()">🗑️ تصفية</button>
+                <button id="verticalModeBtn" class="btn btn-vertical-mode" onclick="toggleVerticalMode()">⬇️ إدخال عمودي: معطل</button>
+                <button id="sortAlphaBtn" class="btn btn-alpha-sort" onclick="toggleSortAlpha()">🔠 ترتيب أبجدي: معطل</button>
+            </div>
+            <div class="toolbar-section-right">
+                 <button class="btn btn-info" onclick="openNamesModal()">👥 الأسماء</button>
+                <button class="btn btn-dark" onclick="window.print()">🖨️ طباعة</button>
+                <button class="btn btn-accent" onclick="exportToExcel()">📊 Excel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- التبويبات -->
+    <div id="sectionTabs" class="section-tabs-container"></div>
+
+    <!-- الجدول التفاعلي -->
+    <div class="table-wrapper" id="gradesTableWrapper">
+        <table id="gradesTable">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        
+        <div id="gradesControls" class="input-row-add" style="padding:10px; background:#fff; border-bottom:1px solid #eee; display:flex; gap:10px; align-items:center; justify-content:center;">
+            <input type="text" id="quickAddName" placeholder="اسم طالب جديد..." style="padding:8px; border:1px solid #ddd; border-radius:5px; width:250px;">
+            <button class="btn btn-accent" onclick="quickAddStudent()">+ إضافة</button>
+        </div>
+
+        <div id="emptyMsg" style="text-align: center; padding: 30px; color: #bdc3c7; display:none;">لا توجد بيانات للعرض</div>
+    </div>
+    
+    <!-- قسم الخطط العلاجية -->
+    <div id="remedialSection" class="remedial-container" style="display:none;">
+        <div class="remedial-grid">
+            <div style="border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+                <div style="background:#f8f9fa; padding:10px; font-weight:bold; border-bottom:1px solid #eee;">
+                    👥 تحديد الطلاب <button style="float:left; font-size:0.8rem; background:none; border:none; color:var(--primary); cursor:pointer;" onclick="selectAllRemedial()">تحديد الكل</button>
+                </div>
+                <div id="remedialStudentList" class="student-select-list"></div>
+            </div>
+            <div class="plan-details-form">
+                <h3 style="margin-top:0; color:var(--primary);">إعداد خطة علاجية</h3>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px;">اختر المجال:</label>
+                    <select id="remedialDomainSelect" onchange="updateWeaknessOptions(this.value)" style="width:100%; margin-bottom:10px;"><option value="">-- اختر المجال --</option></select>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px;">اختر مظهر الضعف:</label>
+                    <select id="remedialWeaknessSelect" onchange="fillActivityByWeakness(this.value)" style="width:100%; margin-bottom:10px;"><option value="">-- اختر مظهر الضعف --</option></select>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px;">تعديل مظهر الضعف (اختياري):</label>
+                    <input type="text" id="planWeakness" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:5px;" placeholder="يمكنك تعديل مظهر الضعف هنا">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+                    <div><label style="display:block; margin-bottom:5px;">تاريخ البدء:</label><input type="date" id="planStartDate" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:5px;"></div>
+                    <div><label style="display:block; margin-bottom:5px;">تاريخ الانتهاء:</label><input type="date" id="planEndDate" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:5px;"></div>
+                </div>
+                <label style="display:block; margin:10px 0 5px;">الإجراءات والأنشطة العلاجية المقترحة:</label>
+                <textarea id="planActivity" style="width:100%; height:80px; padding:8px; border:1px solid #ddd; border-radius:5px;"></textarea>
+                <div style="display:flex; justify-content:flex-end; margin-top:15px;">
+                    <button class="btn btn-accent" onclick="assignRemedialPlan()">تطبيق الخطة ✅</button>
+                    <button class="btn btn-dark" style="margin-right:10px;" onclick="printRemedialPlans()">🖨️ طباعة الخطط</button>
+                </div>
+            </div>
+        </div>
+        <h3 style="border-top:1px solid #eee; padding-top:20px;">📋 جدول متابعة الخطط العلاجية</h3>
+        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+            <thead><tr style="background:#f1f2f6;"><th>الاسم</th><th>الشعبة</th><th>مجال الضعف</th><th>فترة التنفيذ</th><th>الإجراء العلاجي</th><th>حالة التحسن</th><th>إجراءات</th></tr></thead>
+            <tbody id="remedialTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- قسم الخطط الإثرائية -->
+    <div id="enrichmentSection" class="plan-container" style="display:none;">
+        <div class="remedial-grid">
+            <div style="border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+                <div style="background:#f8f9fa; padding:10px; font-weight:bold; border-bottom:1px solid #eee;">
+                    👥 تحديد الطلاب المتفوقين <button style="float:left; font-size:0.8rem; background:none; border:none; color:var(--primary); cursor:pointer;" onclick="selectAllEnrichment()">تحديد الكل</button>
+                </div>
+                <div id="enrichmentStudentList" class="student-select-list"></div>
+            </div>
+            <div class="plan-details-form" style="border-color: var(--enrich-color);">
+                <h3 style="margin-top:0; color:var(--enrich-color);">💎 إعداد خطة إثرائية</h3>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px;">المجال/المهارة:</label>
+                    <select id="enrichmentDomainSelect" onchange="updateEnrichmentActivities(this.value)" style="width:100%; margin-bottom:10px;"><option value="">-- اختر المجال --</option></select>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px;">النشاط المقترح:</label>
+                    <select id="enrichmentActivitySelect" onchange="fillEnrichmentActivity(this.value)" style="width:100%; margin-bottom:10px;"><option value="">-- اختر النشاط --</option></select>
+                </div>
+                <label style="display:block; margin:10px 0 5px;">تفاصيل النشاط الإثرائي:</label>
+                <textarea id="enrichmentActivityText" style="width:100%; height:80px; padding:8px; border:1px solid #ddd; border-radius:5px;"></textarea>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+                    <div><label style="display:block; margin-bottom:5px;">تاريخ البدء:</label><input type="date" id="enrichmentStartDate" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:5px;"></div>
+                    <div><label style="display:block; margin-bottom:5px;">تاريخ الانتهاء:</label><input type="date" id="enrichmentEndDate" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:5px;"></div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; margin-top:15px;">
+                    <button class="btn btn-accent" style="background-color:var(--enrich-color);" onclick="assignEnrichmentPlan()">تطبيق الخطة 💎</button>
+                    <button class="btn btn-dark" style="margin-right:10px;" onclick="printEnrichmentPlans()">🖨️ طباعة الخطط</button>
+                </div>
+            </div>
+        </div>
+        <h3 style="border-top:1px solid #eee; padding-top:20px; color:var(--enrich-color);">📋 متابعة الخطط الإثرائية</h3>
+        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+            <thead><tr style="background:#f3e5f5;"><th>الاسم</th><th>الشعبة</th><th>المهارة المستهدفة</th><th>فترة التنفيذ</th><th>النشاط الإثرائي</th><th>مستوى الإنجاز</th><th>إجراءات</th></tr></thead>
+            <tbody id="enrichmentTableBody"></tbody>
+        </table>
+    </div>
+    
+    <div id="printContainer"></div>
+
+    <div id="analysisSection" class="analysis-section">
+        <h3 style="color:var(--primary); margin-bottom:20px;">📊 تحليل النتائج</h3>
+        <div class="stats-grid">
+            <div class="stat-card" style="border-bottom-color:#2c3e50"><h5>إجمالي الطلاب</h5><div id="statTotal" class="stat-num" style="color:#2c3e50">0</div></div>
+            <div class="stat-card" style="border-bottom-color:#e74c3c"><h5>ضعيف</h5><div id="statWeak" class="stat-num" style="color:#e74c3c">0</div></div>
+            <div class="stat-card" style="border-bottom-color:#f39c12"><h5>مقبول</h5><div id="statAcc" class="stat-num" style="color:#f39c12">0</div></div>
+            <div class="stat-card" style="border-bottom-color:#3498db"><h5>جيد</h5><div id="statGood" class="stat-num" style="color:#3498db">0</div></div>
+            <div class="stat-card" style="border-bottom-color:#1abc9c"><h5>جيد جداً</h5><div id="statVGood" class="stat-num" style="color:#1abc9c">0</div></div>
+            <div class="stat-card" style="border-bottom-color:#2ecc71"><h5>ممتاز</h5><div id="statExc" class="stat-num" style="color:#2ecc71">0</div></div>
+        </div>
+        <div class="rates-grid">
+            <div class="rate-card red"><h5>⚠️ نسبة التدني (< 5)</h5><div class="stat-num" id="rateLow">0%</div></div>
+            <div class="rate-card green"><h5>🌟 نسبة التفوق (أ، ب)</h5><div class="stat-num" id="rateHigh">0%</div></div>
+        </div>
+        <div class="chart-wrapper"><canvas id="analysisChart"></canvas></div>
+        <div class="lists-wrapper">
+            <div class="list-card top-list"><h4 style="color:#27ae60; border-color:#2ecc71">🌟 العشرة الأوائل</h4><div id="topList"></div></div>
+            <div class="list-card bottom-list"><h4 style="color:#c0392b; border-color:#e74c3c">⚠️ بحاجة لمتابعة (أقل 10)</h4><div id="bottomList"></div></div>
+        </div>
+    </div>
+
+    <!-- حاويات الطباعة المجمعة -->
+    <div id="printAnalysisContainer" class="analysis-print-container"></div>
+    <div id="printRemedialContainer" class="analysis-print-container"></div>
+    <div id="printEnrichmentContainer" class="analysis-print-container"></div>
+
+    <div class="print-footer">
+        <div style="flex:1; text-align:right;">توقيع المعلم: ........................</div>
+        <div style="flex:1; text-align:left;">يعتمد، مدير المدرسة: ........................</div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div id="namesModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:var(--primary);">إدارة الشعب والأسماء</h3>
+        <div style="margin-bottom:10px;"><label>المرحلة:</label> <select id="modalStageSelect" onchange="loadSectionsForModal()" style="width:100%"><option value="5-9">5-9</option><option value="10-11">10-11</option><option value="12">12</option></select></div>
+        <div style="margin-bottom:15px;"><label>الشعبة:</label> <div id="modalSectionList" class="modal-section-list"></div> <input type="text" id="modalSectionName" placeholder="اسم الشعبة..." style="width:100%; padding:8px; border:1px solid #ddd; margin-top:5px;"></div>
+        <label>الطلاب:</label><textarea id="modalNamesText"></textarea>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:15px;"><button class="btn btn-accent" onclick="saveSectionNames()">💾 حفظ</button><button class="btn btn-danger" onclick="document.getElementById('namesModal').classList.remove('active')">إغلاق</button></div>
+    </div>
+</div>
+
+<div id="behaviorModal" class="modal">
+    <div class="modal-content" style="max-width:500px;">
+        <h3 id="behaviorStudentName" style="color:var(--primary); margin-top:0;">تسجيل سلوك</h3>
+        <div style="margin-bottom: 15px; text-align: center;">
+            <label style="font-weight:bold;">تاريخ السلوك: </label>
+            <input type="date" id="behaviorDate" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc; font-family:'Cairo';">
+        </div>
+        <input type="hidden" id="behaviorStudentIndex">
+        
+        <h4 style="color:#27ae60; margin-bottom:5px;">👍 تعزيز (إيجابي)</h4>
+        <div class="behavior-btn-grid">
+            <div class="b-btn b-pos" onclick="addBehaviorLog('إجابة مميزة', 0.5)">إجابة مميزة (+0.5)</div>
+            <div class="b-btn b-pos" onclick="addBehaviorLog('انتباه وتركيز', 0.25)">انتباه وتركيز (+0.25)</div>
+            <div class="b-btn b-pos" onclick="addBehaviorLog('تقيد بالتعليمات', 0.25)">تقيد بالتعليمات (+0.25)</div>
+            <div class="b-btn b-pos" onclick="addBehaviorLog('انتظام', 0.5)">انتظام (+0.5)</div>
+            <div class="b-btn b-pos" onclick="addBehaviorLog('إحضار الأدوات', 0.25)">إحضار الأدوات (+0.25)</div>
+            <div class="b-btn b-pos" onclick="addBehaviorLog('مشاركة فعالة', 0.5)">مشاركة فعالة (+0.5)</div>
+        </div>
+
+        <h4 style="color:#c0392b; margin-bottom:5px; margin-top:15px;">👎 تنبيه (سلبي)</h4>
+        <div class="behavior-btn-grid">
+            <div class="b-btn b-neg" onclick="addBehaviorLog('عدم إحضار أدوات', -0.5)">عدم إحضار أدوات (-0.5)</div>
+            <div class="b-btn b-neg" onclick="addBehaviorLog('تأخير عن الحصة', -0.5)">تأخير (-0.5)</div>
+            <div class="b-btn b-neg" onclick="addBehaviorLog('أحاديث جانبية', -0.5)">أحاديث جانبية (-0.5)</div>
+            <div class="b-btn b-neg" onclick="addBehaviorLog('عدم احترام', -1)">عدم احترام (-1)</div>
+            <div class="b-btn b-neg" onclick="addBehaviorLog('إخلال بالحصة', -1)">إخلال بالحصة (-1)</div>
+            <div class="b-btn b-neg" onclick="addBehaviorLog('نوم/سرحان', -0.5)">نوم/سرحان (-0.5)</div>
+        </div>
+        
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+        <h4 style="margin: 5px 0;">سجل السلوكيات:</h4>
+        <div id="behaviorLogList" style="max-height: 150px; overflow-y: auto; border: 1px solid #eee; padding: 5px; margin-bottom: 15px; font-size: 0.9rem;"></div>
+
+        <div style="margin-top:20px; text-align:center; display:flex; justify-content:center; gap:10px;">
+             <button class="btn btn-danger" onclick="clearBehaviorLog()">🗑️ تصفير السجل بالكامل</button>
+             <button class="btn btn-dark" onclick="document.getElementById('behaviorModal').classList.remove('active')">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div id="clearModal" class="modal">
+    <div class="modal-content" style="max-width:400px; text-align:center;">
+        <h3 style="color:var(--error);">⚠️ تصفية البيانات</h3>
+        <div style="display:flex; flex-direction:column; gap:10px; margin:20px 0;">
+            <button class="btn btn-warning" onclick="executeClear(1)">🧹 مسح الدرجات فقط</button>
+            <button class="btn btn-warning" onclick="executeClear(2)">📋 مسح القوائم والشعب</button>
+            <button class="btn btn-danger" onclick="executeClear(3)">🔥 مسح شامل</button>
+        </div>
+        <button class="btn btn-dark" onclick="document.getElementById('clearModal').classList.remove('active')">إلغاء</button>
+    </div>
+</div>
+
+<script>
+    const REMEDIAL_DATA = {
+        "المهارات الجغرافية (الخرائط)": {
+            "ضعف تحديد المواقع على الخريطة": "تدريب عملي على الأطلس، Google Earth، مسابقات توقيع الخرائط",
+            "صعوبة رسم الرموز وتوقيع الظواهر": "رسم قطاعات تضاريسية مبسطة، استخدام رموز مفتاح الخريطة",
+            "العجز عن استخدام شبكة الإحداثيات": "تطبيقات عملية لتحديد مواقع مدن باستخدام خطوط الطول والعرض"
+        },
+        "البيانات والتحليل الإحصائي": {
+            "ضعف قراءة الرسوم البيانية": "تحويل نص من الكتاب إلى رسم بياني، استنتاج دلالات الأرقام",
+            "صعوبة تحليل الهرم السكاني": "تلوين فئات الهرم، مناقشة دلالات اتساع القاعدة وقمة الهرم"
+        },
+        "التاريخ والحضارة العمانية": {
+            "الخلط في التسلسل الزمني للأحداث": "تصميم خط زمني (Timeline) للأحداث، ترتيب بطاقات تاريخية",
+            "عدم التمييز بين المفاهيم التراثية": "عرض مقاطع مرئية، مقارنة صور القلاع والحصون، بطاقات تعريفية"
+        },
+        "المواطنة والنظم": {
+            "الخلط بين اختصاصات المجالس": "محاكاة أدوار أعضاء المجالس، رسم خرائط مفاهيمية للاختصاصات"
+        }
+    };
+
+    const ENRICHMENT_DATA = {
+        "البحث العلمي والاستقصاء": {
+            "إعداد ورقة بحثية": "تكليف الطالب بإعداد ورقة بحثية حول قضية معاصرة مرتبطة بالمنهج.",
+            "تلخيص كتب": "قراءة وتلخيص كتاب خارجي أو مقالات علمية وإلقاءها."
+        },
+        "التقنيات الحديثة": {
+            "تصميم خريطة رقمية": "استخدام برامج GIS لرسم خريطة تفاعلية للمحافظة.",
+            "مونتاج فيديو تعليمي": "إنتاج فيديو قصير يشرح مفهوماً جغرافياً أو تاريخياً."
+        },
+        "القيادة والإلقاء": {
+            "المعلم الصغير": "تكليف الطالب بشرح جزء من الدرس للزملاء.",
+            "إدارة ندوة": "إدارة حوار صفي أو ندوة مصغرة حول موضوع معين."
+        }
+    };
+
+    const SCHEMAS = {
+        '5-9': { name: 'الصفوف (5-9)', total: 60, fields: [{ id: 'oral', label: 'العرض<br>الشفوي<br>(10)', max: 10 }, { id: 'q1', label: 'السؤال<br>القصير 1<br>(5)', max: 5 }, { id: 'q2', label: 'السؤال<br>القصير 2<br>(5)', max: 5 }, { id: 'ex1', label: 'الاختبار<br>القصير 1<br>(15)', max: 15, isKey: true }, { id: 'ex2', label: 'الاختبار<br>القصير 2<br>(15)', max: 15 }, { id: 'rep', label: 'التقرير<br>(10)', max: 10 }] },
+        '10-11': { name: 'الصفوف (10-11)', total: 40, fields: [{ id: 'q1', label: 'السؤال<br>القصير 1<br>(5)', max: 5 }, { id: 'q2', label: 'السؤال<br>القصير 2<br>(5)', max: 5 }, { id: 'ex1', label: 'الاختبار<br>القصير 1<br>(10)', max: 10, isKey: true }, { id: 'ex2', label: 'الاختبار<br>القصير 2<br>(10)', max: 10 }, { id: 'rep', label: 'التقرير<br>(10)', max: 10 }] },
+        '12': { name: 'الصف (12)', total: 30, fields: [{ id: 'shortQ', label: 'الأسئلة<br>القصيرة<br>(5)', max: 5 }, { id: 'ex1', label: 'الاختبار<br>القصير 1<br>(10)', max: 10, isKey: true }, { id: 'ex2', label: 'الاختبار<br>القصير 2<br>(10)', max: 10 }, { id: 'rep', label: 'التقرير<br>(5)', max: 5 }] }
+    };
+
+    let currentKey = null;
+    let chartObj = null;
+    let selectedSections = []; 
+    let isVerticalMode = false;
+    let isAlphaSort = false;
+    let currentMode = 'grades'; 
+    let dbSections = {}; 
+    let dbGrades = { '5-9': [], '10-11': [], '12': [] };
+    let dbBehavior = { '5-9': [], '10-11': [], '12': [] };
+    let dbRemedial = { '5-9': [], '10-11': [], '12': [] };
+    let dbEnrichment = { '5-9': [], '10-11': [], '12': [] };
+    let chartInstance = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadData();
+        initChart();
+        initRemedialDropdowns();
+        initEnrichmentDropdowns();
+        const today = new Date();
+        const twoWeeks = new Date();
+        twoWeeks.setDate(today.getDate() + 14);
+        document.getElementById('planStartDate').value = today.toISOString().split('T')[0];
+        document.getElementById('planEndDate').value = twoWeeks.toISOString().split('T')[0];
+        document.getElementById('enrichmentStartDate').value = today.toISOString().split('T')[0];
+        document.getElementById('enrichmentEndDate').value = twoWeeks.toISOString().split('T')[0];
+    });
+
+    function loadData() {
+        const sec = localStorage.getItem('ss_sections');
+        const grd = localStorage.getItem('ss_grades');
+        const beh = localStorage.getItem('ss_behavior');
+        const rem = localStorage.getItem('ss_remedial');
+        const enr = localStorage.getItem('ss_enrichment');
+        
+        if(sec) try { dbSections = JSON.parse(sec); } catch(e) { dbSections = {}; }
+        if(grd) try { dbGrades = JSON.parse(grd); } catch(e) { dbGrades = { '5-9': [], '10-11': [], '12': [] }; }
+        if(beh) try { dbBehavior = JSON.parse(beh); } catch(e) { dbBehavior = { '5-9': [], '10-11': [], '12': [] }; }
+        if(rem) try { dbRemedial = JSON.parse(rem); } catch(e) { dbRemedial = { '5-9': [], '10-11': [], '12': [] }; }
+        if(enr) try { dbEnrichment = JSON.parse(enr); } catch(e) { dbEnrichment = { '5-9': [], '10-11': [], '12': [] }; }
+    }
+
+    function saveData() {
+        localStorage.setItem('ss_sections', JSON.stringify(dbSections));
+        localStorage.setItem('ss_grades', JSON.stringify(dbGrades));
+        localStorage.setItem('ss_behavior', JSON.stringify(dbBehavior));
+        localStorage.setItem('ss_remedial', JSON.stringify(dbRemedial));
+        localStorage.setItem('ss_enrichment', JSON.stringify(dbEnrichment));
+    }
+
+    function initRemedialDropdowns() {
+        const domainSel = document.getElementById('remedialDomainSelect');
+        domainSel.innerHTML = '<option value="">-- اختر المجال --</option>';
+        Object.keys(REMEDIAL_DATA).forEach(domain => {
+            const opt = document.createElement('option');
+            opt.value = domain;
+            opt.innerText = domain;
+            domainSel.appendChild(opt);
+        });
+    }
+
+    function updateWeaknessOptions(domain) {
+        const weaknessSel = document.getElementById('remedialWeaknessSelect');
+        const activityTxt = document.getElementById('planActivity');
+        const weaknessInput = document.getElementById('planWeakness');
+        weaknessSel.innerHTML = '<option value="">-- اختر مظهر الضعف --</option>';
+        activityTxt.value = '';
+        weaknessInput.value = '';
+        if(domain && REMEDIAL_DATA[domain]) {
+            Object.keys(REMEDIAL_DATA[domain]).forEach(weakness => {
+                const opt = document.createElement('option');
+                opt.value = weakness;
+                opt.innerText = weakness;
+                weaknessSel.appendChild(opt);
+            });
+        }
+    }
+
+    function fillActivityByWeakness(weakness) {
+        const domain = document.getElementById('remedialDomainSelect').value;
+        const activityTxt = document.getElementById('planActivity');
+        const weaknessInput = document.getElementById('planWeakness');
+        weaknessInput.value = weakness;
+        if(domain && weakness && REMEDIAL_DATA[domain][weakness]) {
+            activityTxt.value = REMEDIAL_DATA[domain][weakness];
+        } else {
+            activityTxt.value = '';
+        }
+    }
+    
+    function initEnrichmentDropdowns() {
+        const domainSel = document.getElementById('enrichmentDomainSelect');
+        domainSel.innerHTML = '<option value="">-- اختر المجال/المهارة --</option>';
+        Object.keys(ENRICHMENT_DATA).forEach(domain => {
+            const opt = document.createElement('option');
+            opt.value = domain;
+            opt.innerText = domain;
+            domainSel.appendChild(opt);
+        });
+    }
+
+    function updateEnrichmentActivities(domain) {
+        const activitySel = document.getElementById('enrichmentActivitySelect');
+        const activityText = document.getElementById('enrichmentActivityText');
+        activitySel.innerHTML = '<option value="">-- اختر النشاط المقترح --</option>';
+        activityText.value = '';
+        if(domain && ENRICHMENT_DATA[domain]) {
+            Object.keys(ENRICHMENT_DATA[domain]).forEach(act => {
+                const opt = document.createElement('option');
+                opt.value = act;
+                opt.innerText = act;
+                activitySel.appendChild(opt);
+            });
+        }
+    }
+
+    function fillEnrichmentActivity(actName) {
+        const domain = document.getElementById('enrichmentDomainSelect').value;
+        const activityText = document.getElementById('enrichmentActivityText');
+        if(domain && actName && ENRICHMENT_DATA[domain][actName]) {
+            activityText.value = ENRICHMENT_DATA[domain][actName];
+        }
+    }
+
+    function parseGrade(sectionName) {
+        if(!sectionName) return 999;
+        const match = sectionName.match(/(\d+)|(خامس|سادس|سابع|ثامن|تاسع|عاشر|حادي|ثاني)/);
+        if(match) {
+            const val = match[0];
+            if(!isNaN(val)) return parseInt(val);
+            if(val.includes('خامس')) return 5;
+            if(val.includes('سادس')) return 6;
+            if(val.includes('سابع')) return 7;
+            if(val.includes('ثامن')) return 8;
+            if(val.includes('تاسع')) return 9;
+            if(val.includes('عاشر')) return 10;
+            if(val.includes('حادي')) return 11;
+            if(val.includes('ثاني')) return 12;
+        }
+        return 999;
+    }
+
+    function startApp(key) {
+        currentKey = key;
+        currentMode = 'grades';
+        selectedSections = [];
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('workspace').classList.add('active');
+        document.getElementById('currentStageLabel').innerText = SCHEMAS[key].name;
+        updateSectionDropdown();
+        renderSectionTabs();
+        renderTable();
+    }
+
+    function returnToMain() {
+        currentKey = null;
+        document.getElementById('landingGradeSelect').value = "";
+        document.getElementById('workspace').classList.remove('active');
+        document.getElementById('landingPage').style.display = 'flex';
+        if(chartInstance) {
+             chartInstance.data.datasets[0].data = [0,0,0,0,0];
+             chartInstance.update();
+        }
+    }
+
+    function switchMode(mode) {
+        currentMode = mode;
+        ['grades','behavior','remedial','enrichment'].forEach(m => {
+            const btn = document.getElementById(`mode${m.charAt(0).toUpperCase() + m.slice(1)}Btn`);
+            if(btn) btn.className = `mode-btn ${mode === m ? 'active' : ''}`;
+        });
+
+        document.getElementById('analysisSection').style.display = mode === 'grades' ? 'block' : 'none';
+        document.getElementById('gradesControls').style.display = mode === 'grades' ? 'flex' : 'none';
+        document.getElementById('verticalModeBtn').style.display = mode === 'grades' ? 'inline-block' : 'none';
+        document.getElementById('gradesTableWrapper').style.display = (mode === 'grades' || mode === 'behavior') ? 'block' : 'none';
+        document.getElementById('remedialSection').style.display = mode === 'remedial' ? 'block' : 'none';
+        document.getElementById('enrichmentSection').style.display = mode === 'enrichment' ? 'block' : 'none';
+        
+        if (mode === 'remedial') {
+            renderRemedialInterface();
+        } else if (mode === 'enrichment') {
+            renderEnrichmentInterface();
+        } else {
+            renderTable();
+        }
+    }
+
+    function renderRemedialInterface() {
+        const listDiv = document.getElementById('remedialStudentList');
+        listDiv.innerHTML = '';
+        let students = [...(dbGrades[currentKey] || [])];
+        if(selectedSections.length > 0) students = students.filter(s => selectedSections.includes(s.section));
+        students.sort((a,b) => a.name.localeCompare(b.name, 'ar'));
+        students.forEach((s, i) => {
+            const div = document.createElement('div');
+            div.className = 'student-select-item';
+            div.innerHTML = `<input type="checkbox" class="rem-check" value="${s.name}:::${s.section}"><span>${s.name} <small style="color:#888">(${s.section})</small></span>`;
+            listDiv.appendChild(div);
+        });
+
+        const tbody = document.getElementById('remedialTableBody');
+        tbody.innerHTML = '';
+        const plans = dbRemedial[currentKey] || [];
+        const visiblePlans = selectedSections.length > 0 ? plans.filter(p => selectedSections.includes(p.section)) : plans;
+        if(visiblePlans.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">لا توجد خطط علاجية نشطة</td></tr>';
+        } else {
+            visiblePlans.forEach((p, index) => {
+                const realIndex = plans.indexOf(p);
+                let statusColor = p.status === 'done' ? '#2ecc71' : (p.status === 'progress' ? '#3498db' : '#95a5a6');
+                let period = p.startDate && p.endDate ? `${p.startDate} <br>إلى<br> ${p.endDate}` : '-';
+                tbody.innerHTML += `<tr><td>${p.name}</td><td>${p.section}</td><td>${p.weakness}</td><td style="font-size:0.85rem; color:#666;">${period}</td><td>${p.activity}</td><td><select onchange="updateRemedialStatus(${realIndex}, this.value)" style="padding:2px; font-size:0.8rem; border-color:${statusColor}; color:${statusColor}; font-weight:bold;"><option value="new" ${p.status==='new'?'selected':''}>جاري التنفيذ</option><option value="progress" ${p.status==='progress'?'selected':''}>تحسن</option><option value="done" ${p.status==='done'?'selected':''}>أتقن المهارة</option></select></td><td><button style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteRemedialPlan(${realIndex})">✕</button></td></tr>`;
+            });
+        }
+    }
+    
+    function renderEnrichmentInterface() {
+        const listDiv = document.getElementById('enrichmentStudentList');
+        listDiv.innerHTML = '';
+        let students = [...(dbGrades[currentKey] || [])];
+        if(selectedSections.length > 0) students = students.filter(s => selectedSections.includes(s.section));
+        students.sort((a,b) => a.name.localeCompare(b.name, 'ar'));
+        students.forEach((s, i) => {
+            const div = document.createElement('div');
+            div.className = 'student-select-item';
+            div.innerHTML = `<input type="checkbox" class="enr-check" value="${s.name}:::${s.section}"><span>${s.name} <small style="color:#888">(${s.section})</small></span>`;
+            listDiv.appendChild(div);
+        });
+
+        const tbody = document.getElementById('enrichmentTableBody');
+        tbody.innerHTML = '';
+        const plans = dbEnrichment[currentKey] || [];
+        const visiblePlans = selectedSections.length > 0 ? plans.filter(p => selectedSections.includes(p.section)) : plans;
+        if(visiblePlans.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">لا توجد خطط إثرائية نشطة</td></tr>';
+        } else {
+            visiblePlans.forEach((p, index) => {
+                const realIndex = plans.indexOf(p);
+                let statusColor = p.status === 'done' ? '#2ecc71' : (p.status === 'progress' ? '#9b59b6' : '#95a5a6');
+                let period = p.startDate && p.endDate ? `${p.startDate} <br>إلى<br> ${p.endDate}` : '-';
+                tbody.innerHTML += `<tr><td>${p.name}</td><td>${p.section}</td><td>${p.skill}</td><td style="font-size:0.85rem; color:#666;">${period}</td><td>${p.activity}</td><td><select onchange="updateEnrichmentStatus(${realIndex}, this.value)" style="padding:2px; font-size:0.8rem; border-color:${statusColor}; color:${statusColor}; font-weight:bold;"><option value="new" ${p.status==='new'?'selected':''}>جديد</option><option value="progress" ${p.status==='progress'?'selected':''}>قيد الإنجاز</option><option value="done" ${p.status==='done'?'selected':''}>تم الإنجاز</option></select></td><td><button style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteEnrichmentPlan(${realIndex})">✕</button></td></tr>`;
+            });
+        }
+    }
+
+    function selectAllRemedial() { document.querySelectorAll('.rem-check').forEach(c => c.checked = true); }
+    function selectAllEnrichment() { document.querySelectorAll('.enr-check').forEach(c => c.checked = true); }
+
+    function assignRemedialPlan() {
+        const checks = document.querySelectorAll('.rem-check:checked');
+        if(checks.length === 0) return alert("اختر طالباً واحداً على الأقل");
+        const domain = document.getElementById('remedialDomainSelect').value;
+        const weakness = document.getElementById('planWeakness').value.trim();
+        const activity = document.getElementById('planActivity').value;
+        const startDate = document.getElementById('planStartDate').value;
+        const endDate = document.getElementById('planEndDate').value;
+        if(!weakness) return alert("يرجى تحديد مظهر الضعف");
+        if(!dbRemedial[currentKey]) dbRemedial[currentKey] = [];
+        checks.forEach(c => {
+            const [name, section] = c.value.split(':::');
+            const exists = dbRemedial[currentKey].some(p => p.name === name && p.weakness === weakness);
+            if(!exists) { dbRemedial[currentKey].push({ name, section, domain, weakness, activity, startDate, endDate, status: 'new', date: new Date().toLocaleDateString() }); }
+        });
+        saveData(); renderRemedialInterface(); alert("تم تعيين الخطة العلاجية");
+        document.querySelectorAll('.rem-check').forEach(c => c.checked = false);
+    }
+    
+    function assignEnrichmentPlan() {
+        const checks = document.querySelectorAll('.enr-check:checked');
+        if(checks.length === 0) return alert("اختر طالباً واحداً على الأقل");
+        const skill = document.getElementById('enrichmentDomainSelect').value;
+        const activity = document.getElementById('enrichmentActivityText').value;
+        const startDate = document.getElementById('enrichmentStartDate').value;
+        const endDate = document.getElementById('enrichmentEndDate').value;
+        if(!skill || !activity) return alert("يرجى تحديد المهارة والنشاط");
+        if(!dbEnrichment[currentKey]) dbEnrichment[currentKey] = [];
+        checks.forEach(c => {
+            const [name, section] = c.value.split(':::');
+            const exists = dbEnrichment[currentKey].some(p => p.name === name && p.skill === skill);
+            if(!exists) {
+                dbEnrichment[currentKey].push({ name, section, skill, activity, startDate, endDate, status: 'new', date: new Date().toLocaleDateString() });
+            }
+        });
+        saveData(); renderEnrichmentInterface(); alert("تم تعيين الخطة الإثرائية");
+        document.querySelectorAll('.enr-check').forEach(c => c.checked = false);
+    }
+
+    function updateRemedialStatus(idx, status) { if(dbRemedial[currentKey][idx]) { dbRemedial[currentKey][idx].status = status; saveData(); renderRemedialInterface(); } }
+    function updateEnrichmentStatus(idx, status) { if(dbEnrichment[currentKey][idx]) { dbEnrichment[currentKey][idx].status = status; saveData(); renderEnrichmentInterface(); } }
+
+    function deleteRemedialPlan(idx) { if(confirm("حذف هذه الخطة؟")) { dbRemedial[currentKey].splice(idx, 1); saveData(); renderRemedialInterface(); } }
+    function deleteEnrichmentPlan(idx) { if(confirm("حذف هذه الخطة؟")) { dbEnrichment[currentKey].splice(idx, 1); saveData(); renderEnrichmentInterface(); } }
+
+    function printRemedialPlans() {
+        document.getElementById('analysisSection').style.display = 'none';
+        document.getElementById('printAnalysisContainer').innerHTML = '';
+        document.getElementById('printEnrichmentContainer').innerHTML = '';
+        const container = document.getElementById('printRemedialContainer');
+        container.innerHTML = '';
+        let plans = dbRemedial[currentKey] || [];
+        if(selectedSections.length > 0) plans = plans.filter(p => selectedSections.includes(p.section));
+        if(plans.length === 0) return alert("لا توجد خطط علاجية للطباعة");
+        let groups = {};
+        plans.forEach(p => { let k = parseGrade(p.section); if(!groups[k]) groups[k] = []; groups[k].push(p); });
+        Object.keys(groups).sort((a,b)=>a-b).forEach(key => {
+             const groupData = groups[key];
+             const pageDiv = document.createElement('div'); pageDiv.className = "grade-report-page";
+             let title = `تقرير الخطط العلاجية - الصف ${key}`;
+             let rows = '';
+             groupData.forEach(p => {
+                 let statusText = p.status === 'done' ? 'أتقن المهارة' : (p.status === 'progress' ? 'تحسن' : 'جاري التنفيذ');
+                 let period = p.startDate && p.endDate ? `${p.startDate} إلى ${p.endDate}` : '-';
+                 rows += `<tr><td>${p.name}</td><td>${p.section}</td><td>${p.weakness}</td><td>${period}</td><td>${p.activity}</td><td>${statusText}</td></tr>`;
+             });
+             pageDiv.innerHTML = `<div class="analysis-print-title">${title}</div><table class="behavior-log-table"><thead><tr><th>الاسم</th><th>الشعبة</th><th>مظهر الضعف</th><th>الفترة</th><th>الإجراء العلاجي</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table>`;
+             container.appendChild(pageDiv);
+        });
+        window.print();
+        setTimeout(() => { document.getElementById('printRemedialContainer').innerHTML = ''; }, 1000);
+    }
+    
+    function printEnrichmentPlans() {
+        document.getElementById('analysisSection').style.display = 'none';
+        document.getElementById('printAnalysisContainer').innerHTML = '';
+        document.getElementById('printRemedialContainer').innerHTML = '';
+        const container = document.getElementById('printEnrichmentContainer');
+        container.innerHTML = '';
+        let plans = dbEnrichment[currentKey] || [];
+        if(selectedSections.length > 0) plans = plans.filter(p => selectedSections.includes(p.section));
+        if(plans.length === 0) return alert("لا توجد خطط إثرائية للطباعة");
+        let groups = {};
+        plans.forEach(p => { let k = parseGrade(p.section); if(!groups[k]) groups[k] = []; groups[k].push(p); });
+        Object.keys(groups).sort((a,b)=>a-b).forEach(key => {
+             const groupData = groups[key];
+             const pageDiv = document.createElement('div'); pageDiv.className = "grade-report-page";
+             let title = `تقرير الخطط الإثرائية (رعاية الفائقين) - الصف ${key}`;
+             let rows = '';
+             groupData.forEach(p => {
+                 let statusText = p.status === 'done' ? 'تم الإنجاز' : (p.status === 'progress' ? 'قيد الإنجاز' : 'جديد');
+                 let period = p.startDate && p.endDate ? `${p.startDate} إلى ${p.endDate}` : '-';
+                 rows += `<tr><td>${p.name}</td><td>${p.section}</td><td>${p.skill}</td><td>${period}</td><td>${p.activity}</td><td>${statusText}</td></tr>`;
+             });
+             pageDiv.innerHTML = `<div class="analysis-print-title">${title}</div><table class="behavior-log-table"><thead><tr><th>الاسم</th><th>الشعبة</th><th>المهارة المستهدفة</th><th>الفترة</th><th>النشاط الإثرائي</th><th>مستوى الإنجاز</th></tr></thead><tbody>${rows}</tbody></table>`;
+             container.appendChild(pageDiv);
+        });
+        window.print();
+        setTimeout(() => { document.getElementById('printEnrichmentContainer').innerHTML = ''; }, 1000);
+    }
+
+    function calculateLevel(percentage) {
+        if (percentage >= 90) return 'أ';
+        if (percentage >= 80) return 'ب';
+        if (percentage >= 65) return 'ج';
+        if (percentage >= 50) return 'د';
+        return 'هـ';
+    }
+
+    function getLevelColorClass(level) {
+        if (level === 'أ') return 'level-A';
+        if (level === 'ب') return 'level-B';
+        if (level === 'ج') return 'level-C';
+        if (level === 'د') return 'level-D';
+        return 'level-E';
+    }
+
+    function giveFullMarkToAll(fieldId) {
+        if(!confirm("هل أنت متأكد من منح الدرجة الكاملة لجميع الطلاب الظاهرين في هذا العمود؟")) return;
+        const schema = SCHEMAS[currentKey];
+        const field = schema.fields.find(f => f.id === fieldId);
+        const maxScore = field.max;
+        let data = dbGrades[currentKey];
+        data.forEach(student => {
+            if(selectedSections.length > 0 && !selectedSections.includes(student.section)) return;
+            student.scores[fieldId] = maxScore;
+            if(field.isKey) student.keyScore = maxScore;
+        });
+        saveData();
+        renderTable();
+    }
+
+    function renderTable() {
+        const table = document.getElementById('gradesTable');
+        table.innerHTML = ''; 
+        const schema = SCHEMAS[currentKey];
+        const thead = document.createElement('thead');
+        
+        let printTitle = currentMode === 'grades' ? `سجل درجات الدراسات الاجتماعية - ${schema.name}` : `سجل السلوك والمواظبة - ${schema.name}`;
+        if (selectedSections.length > 0) printTitle += ` (شعب محددة)`;
+
+        let hHtml = `<tr class="print-title-row"><th colspan="100%">${printTitle}</th></tr><tr><th style="width:40px">#</th><th style="text-align:right; min-width:200px">الاسم</th><th style="width:70px">الشعبة</th>`;
+        if (currentMode === 'grades') {
+            schema.fields.forEach(f => {
+                hHtml += `<th style="width:70px">
+                    ${f.label}
+                    <br>
+                    <button class="btn-mini-action" onclick="giveFullMarkToAll('${f.id}')" title="إعطاء الدرجة الكاملة للجميع">✅</button>
+                </th>`;
+            });
+            hHtml += `<th>المجموع<br>(${schema.total})</th><th>المستوى</th><th style="width:60px">حذف</th></tr>`;
+        } else {
+            hHtml += `<th>نقاط السلوك<br>(من 10)</th><th>إجراءات سريعة</th><th>آخر ملاحظة (مع التاريخ)</th></tr>`;
+        }
+        thead.innerHTML = hHtml;
+        table.appendChild(thead);
+
+        let data = [...(dbGrades[currentKey] || [])]; 
+        if(selectedSections.length > 0) data = data.filter(item => selectedSections.includes(item.section));
+        data.sort((a, b) => {
+            const gradeA = parseGrade(a.section);
+            const gradeB = parseGrade(b.section);
+            if (gradeA !== gradeB) return gradeA - gradeB;
+            if (a.section !== b.section) return a.section.localeCompare(b.section, 'ar');
+            return isAlphaSort ? a.name.localeCompare(b.name, 'ar') : 0;
+        });
+        
+        let currentSectionGroup = null;
+        let tbody = null;
+        let counter = 1;
+        let printGroups = {}; 
+
+        data.forEach((item, index) => {
+            let groupKey = parseGrade(item.section);
+            if (!printGroups[groupKey]) printGroups[groupKey] = [];
+            printGroups[groupKey].push(item);
+
+            if (item.section !== currentSectionGroup) {
+                currentSectionGroup = item.section;
+                tbody = document.createElement('tbody');
+                tbody.className = "section-group"; 
+                const groupHeader = document.createElement('tr');
+                groupHeader.className = "section-group-header";
+                const colSpan = currentMode === 'grades' ? (5 + schema.fields.length) : 6;
+                groupHeader.innerHTML = `<td colspan="${colSpan}">الشعبة: ${currentSectionGroup}</td>`;
+                tbody.appendChild(groupHeader);
+                table.appendChild(tbody);
+            }
+
+            const originalIndex = (dbGrades[currentKey] || []).indexOf(item); 
+            const tr = document.createElement('tr');
+            
+            let html = `<td>${counter++}</td>
+                        <td class="name-cell">
+                            <input type="text" class="name-input-table" value="${item.name}" onchange="updateName(${originalIndex}, this.value)">
+                        </td>
+                        <td class="section-cell">${item.section}</td>`;
+            
+            if (currentMode === 'grades') {
+                schema.fields.forEach(f => {
+                    let val = item.scores[f.id] || "";
+                    html += `<td><input type="number" class="grade-input" id="grade-${originalIndex}-${f.id}" value="${val === null ? '' : val}" min="0" max="${f.max}" step="0.5" onkeydown="handleGradeNavigation(event, ${originalIndex}, '${f.id}')" onchange="updateGrade(${originalIndex}, '${f.id}', this.value)"></td>`;
+                });
+                
+                const stats = getStudentStats(item, schema);
+                // التعديل: إظهار الرقم فقط
+                let totalDisplay = stats.hasGrade ? stats.obtained : "-";
+                let levelChar = stats.hasGrade ? calculateLevel(stats.percentage) : "-";
+                let levelClass = stats.hasGrade ? getLevelColorClass(levelChar) : "";
+                
+                html += `<td class="total-cell" id="total-${originalIndex}">${totalDisplay}</td>
+                         <td class="level-cell ${levelClass}" id="level-${originalIndex}">${levelChar}</td>
+                         <td><button class="action-btn del-btn" onclick="deleteItem(${originalIndex})">✕</button></td>`;
+            } else {
+                let bData = getBehaviorData(item.name, item.section);
+                let score = bData ? bData.score : 0; 
+                let lastNote = "-";
+                if (bData && bData.logs.length > 0) {
+                     const lastLog = bData.logs[bData.logs.length-1];
+                     const dateStr = lastLog.date ? `[${lastLog.date}] ` : "";
+                     lastNote = `${dateStr}${lastLog.reason}`;
+                }
+                
+                html += `<td><span class="behavior-score ${score >= 10 ? 'full-mark' : ''}" style="color:${score < 0 ? 'red' : 'green'}">${score}</span></td>
+                         <td>
+                            <button class="btn-behavior btn-pos" title="إضافة تعزيز" onclick="openBehaviorModal(${originalIndex}, 'pos')">👍</button>
+                            <button class="btn-behavior btn-neg" title="إضافة تنبيه" onclick="openBehaviorModal(${originalIndex}, 'neg')">👎</button>
+                            <button class="btn-behavior btn-view-log" title="سجل الملاحظات / حذف" onclick="openBehaviorModal(${originalIndex}, 'view')">📋</button>
+                         </td>
+                         <td class="behavior-history">${lastNote}</td>`;
+            }
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('emptyMsg').style.display = data.length ? 'none' : 'block';
+        if (currentMode === 'grades') {
+            updateAnalysis(data);
+            buildPrintReport(printGroups);
+            document.getElementById('analysisSection').style.display = 'block';
+        } else {
+            document.getElementById('analysisSection').style.display = 'none';
+            buildBehaviorPrintReport(printGroups);
+        }
+    }
+    
+    // دالة مساعدة لحساب مجموع الطالب الحالي
+    function getStudentStats(student, schema) {
+        let obtained = 0;
+        let max = 0;
+        let hasGrade = false;
+        
+        if(!student.scores) return { obtained:0, max:0, percentage:0, hasGrade:false };
+
+        schema.fields.forEach(f => {
+            const val = student.scores[f.id];
+            if (val !== null && val !== "" && val !== undefined) {
+                obtained += parseFloat(val);
+                max += f.max;
+                hasGrade = true;
+            }
+        });
+
+        let percentage = 0;
+        if (max > 0) {
+            percentage = (obtained / max) * 100;
+        }
+
+        return { obtained: parseFloat(obtained.toFixed(1)), max, percentage, hasGrade };
+    }
+
+    // --- منطق السلوك ---
+    function getBehaviorData(name, section) {
+        if (!dbBehavior[currentKey]) dbBehavior[currentKey] = [];
+        return dbBehavior[currentKey].find(b => b.name === name && b.section === section);
+    }
+    
+    function openBehaviorModal(idx, type) {
+        const student = dbGrades[currentKey][idx];
+        document.getElementById('behaviorStudentName').innerText = student.name;
+        document.getElementById('behaviorStudentIndex').value = idx;
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('behaviorDate').value = today;
+        renderBehaviorLogList(student.name, student.section);
+        document.getElementById('behaviorModal').classList.add('active');
+    }
+    
+    function renderBehaviorLogList(name, section) {
+        const listContainer = document.getElementById('behaviorLogList');
+        listContainer.innerHTML = '';
+        let bData = getBehaviorData(name, section);
+        if (bData && bData.logs.length > 0) {
+            bData.logs.forEach((log, i) => {
+                const div = document.createElement('div');
+                div.className = 'log-item';
+                div.style.cssText = 'display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #eee; font-size:0.85rem;';
+                const pts = log.points > 0 ? `+${log.points}` : log.points;
+                const color = log.points > 0 ? 'green' : 'red';
+                div.innerHTML = `<span><span style="color:#888">[${log.date}]</span> ${log.reason} (<span style="color:${color}">${pts}</span>)</span><button class="btn-delete-log" onclick="deleteBehaviorItem('${name}', '${section}', ${i})">حذف</button>`;
+                listContainer.appendChild(div);
+            });
+        } else {
+            listContainer.innerHTML = '<div style="text-align:center; color:#aaa; padding:10px;">لا يوجد سجلات</div>';
+        }
+    }
+
+    function addBehaviorLog(reason, points) {
+        const idx = document.getElementById('behaviorStudentIndex').value;
+        const dateVal = document.getElementById('behaviorDate').value; 
+        const student = dbGrades[currentKey][idx];
+        if (!dbBehavior[currentKey]) dbBehavior[currentKey] = [];
+        let bRecord = dbBehavior[currentKey].find(b => b.name === student.name && b.section === student.section);
+        if (!bRecord) { bRecord = { name: student.name, section: student.section, score: 0, logs: [] }; dbBehavior[currentKey].push(bRecord); }
+        bRecord.score += points;
+        if (bRecord.score >= 10 && (bRecord.score - points) < 10) { alert(`🎉 تنبيه: الطالب ${student.name} وصل إلى 10 نقاط سلوك! يرجى تكريمه.`); }
+        const logDate = dateVal || new Date().toLocaleDateString();
+        bRecord.logs.push({ reason: reason, points: points, date: logDate });
+        saveData();
+        renderBehaviorLogList(student.name, student.section);
+        renderTable();
+    }
+    
+    function deleteBehaviorItem(name, section, logIndex) {
+        if(!confirm("هل تريد حذف هذا السلوك واسترجاع الدرجة؟")) return;
+        let bRecord = dbBehavior[currentKey].find(b => b.name === name && b.section === section);
+        if (bRecord) {
+            bRecord.score -= bRecord.logs[logIndex].points;
+            bRecord.score = parseFloat(bRecord.score.toFixed(2));
+            bRecord.logs.splice(logIndex, 1);
+            saveData();
+            renderBehaviorLogList(name, section);
+            renderTable();
+        }
+    }
+    
+    function clearBehaviorLog() {
+        if(!confirm("هل أنت متأكد من مسح سجل سلوك هذا الطالب بالكامل؟")) return;
+        const idx = document.getElementById('behaviorStudentIndex').value;
+        const student = dbGrades[currentKey][idx];
+        if (!dbBehavior[currentKey]) dbBehavior[currentKey] = [];
+        let bRecord = dbBehavior[currentKey].find(b => b.name === student.name && b.section === student.section);
+        if (bRecord) {
+            bRecord.score = 0;
+            bRecord.logs = [];
+            saveData();
+            document.getElementById('behaviorModal').classList.remove('active');
+            renderTable();
+            alert("تم مسح سجل السلوك للطالب.");
+        }
+    }
+
+    function buildPrintReport(groups) {
+        const container = document.getElementById('printAnalysisContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        Object.keys(groups).sort((a,b) => parseInt(a)-parseInt(b)).forEach(key => {
+            const groupData = groups[key];
+            if (groupData.length === 0) return;
+            const pageDiv = document.createElement('div');
+            pageDiv.className = "grade-report-page";
+            let title = key == 999 ? `تقرير تحليل النتائج - شعب أخرى` : `تقرير تحليل النتائج - الصف ${key}`;
+            const stats = calculateStats(groupData);
+            pageDiv.innerHTML = `
+                <div class="analysis-print-title">${title}</div>
+                
+                <!-- السطر الأول: الإحصائيات -->
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-bottom-color:#2c3e50"><h5>إجمالي الطلاب</h5><div class="stat-num" style="color:#2c3e50">${stats.totalStudents}</div></div>
+                    <div class="stat-card" style="border-bottom-color:#e74c3c"><h5>ضعيف</h5><div class="stat-num" style="color:#e74c3c">${stats.counts[0]}</div></div>
+                    <div class="stat-card" style="border-bottom-color:#f39c12"><h5>مقبول</h5><div class="stat-num" style="color:#f39c12">${stats.counts[1]}</div></div>
+                    <div class="stat-card" style="border-bottom-color:#3498db"><h5>جيد</h5><div class="stat-num" style="color:#3498db">${stats.counts[2]}</div></div>
+                    <div class="stat-card" style="border-bottom-color:#1abc9c"><h5>جيد جداً</h5><div class="stat-num" style="color:#1abc9c">${stats.counts[3]}</div></div>
+                    <div class="stat-card" style="border-bottom-color:#2ecc71"><h5>ممتاز</h5><div class="stat-num" style="color:#2ecc71">${stats.counts[4]}</div></div>
+                </div>
+
+                <!-- السطر الثاني: الرسم البياني -->
+                <div class="simple-bar-chart">
+                    ${stats.counts.map((val, i) => { const h = (val / (Math.max(...stats.counts)||1)) * 100; const colors = ['#e74c3c','#f39c12','#3498db','#1abc9c','#2ecc71']; const labels = ['ضعيف','مقبول','جيد','جيد جداً','ممتاز']; return `<div class="bar-col"><div class="bar-val">${val}</div><div class="bar" style="height:${h}%; background:${colors[i]} !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;"></div><div class="bar-label">${labels[i]}</div></div>`; }).join('')}
+                </div>
+
+                <!-- السطر الثالث: نسب التدني والتفوق -->
+                <div class="rates-grid" style="margin-top:20px;">
+                    <div class="rate-card red"><h5>⚠️ نسبة التدني</h5><div class="rate-val">${stats.lowPct}%</div></div>
+                    <div class="rate-card green"><h5>🌟 نسبة التفوق</h5><div class="rate-val">${stats.highPct}%</div></div>
+                </div>
+
+                <div style="page-break-before: always;"></div>
+                <div class="analysis-print-title">قوائم الطلبة - الصف ${key}</div>
+                <div class="lists-wrapper">
+                    <div class="list-card top-list"><h4>🌟 العشرة الأوائل</h4>${stats.top10.map(s => `<div class="student-item"><span>${s.name} (${s.section})</span><b>${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('')}</div>
+                    <div class="list-card bottom-list"><h4>⚠️ بحاجة لمتابعة (أقل 10)</h4>${stats.bottom10.map(s => `<div class="student-item"><span>${s.name} (${s.section})</span><b>${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('')}</div>
+                </div>
+            `;
+            container.appendChild(pageDiv);
+        });
+    }
+
+    function buildBehaviorPrintReport(groups) {
+        const container = document.getElementById('printAnalysisContainer');
+        container.innerHTML = '';
+        Object.keys(groups).sort((a,b) => parseInt(a)-parseInt(b)).forEach(key => {
+            const groupData = groups[key];
+            if (groupData.length === 0) return;
+            const pageDiv = document.createElement('div');
+            pageDiv.className = "grade-report-page";
+            let title = `تقرير السلوك والمواظبة - الصف ${key}`;
+            
+            let behaviorTableRows = '';
+            groupData.forEach(student => {
+                let bData = getBehaviorData(student.name, student.section);
+                if (bData && bData.logs.length > 0) {
+                    let logStr = bData.logs.map(l => `[${l.date}] ${l.reason} (${l.points > 0 ? '+' : ''}${l.points})`).join('<br>');
+                    behaviorTableRows += `<tr><td>${student.name}</td><td>${student.section}</td><td style="font-weight:bold; color:${bData.score<5?'red':'green'}">${bData.score}</td><td style="font-size:0.8rem; text-align:right;">${logStr}</td></tr>`;
+                }
+            });
+
+            if (!behaviorTableRows) behaviorTableRows = '<tr><td colspan="4" style="text-align:center">لا توجد ملاحظات سلوكية مسجلة.</td></tr>';
+
+            pageDiv.innerHTML = `
+                <div class="analysis-print-title">${title}</div>
+                <table class="behavior-log-table">
+                    <thead><tr><th style="width:20%">الاسم</th><th style="width:10%">الشعبة</th><th style="width:10%">الدرجة</th><th>سجل الملاحظات</th></tr></thead>
+                    <tbody>${behaviorTableRows}</tbody>
+                </table>
+            `;
+            container.appendChild(pageDiv);
+        });
+    }
+
+    function calculateStats(data) {
+        let counts = [0,0,0,0,0]; let low = 0, high = 0;
+        data.forEach(d => {
+            const stats = getStudentStats(d, SCHEMAS[currentKey]);
+            if (!stats.hasGrade) return; 
+
+            const p = stats.percentage;
+            
+            if (p >= 90) counts[4]++;      // ممتاز
+            else if (p >= 80) counts[3]++; // جيد جدا
+            else if (p >= 65) counts[2]++; // جيد
+            else if (p >= 50) counts[1]++; // مقبول
+            else counts[0]++;              // ضعيف
+
+            if (p < 50) low++;
+            if (p >= 80) high++;
+        });
+
+        const sorted = [...data].sort((a,b) => {
+            const statsA = getStudentStats(a, SCHEMAS[currentKey]);
+            const statsB = getStudentStats(b, SCHEMAS[currentKey]);
+            return statsB.percentage - statsA.percentage; 
+        });
+        
+        return { 
+            totalStudents: data.length, 
+            counts: counts, 
+            lowPct: data.length ? Math.round((low/data.length)*100) : 0, 
+            highPct: data.length ? Math.round((high/data.length)*100) : 0, 
+            top10: sorted.slice(0, 10), 
+            bottom10: [...sorted].reverse().slice(0, 10), 
+            top5: sorted.slice(0, 5), 
+            bottom5: [...sorted].reverse().slice(0, 5) 
+        };
+    }
+
+    function updateGrade(index, fieldId, value) {
+        const student = dbGrades[currentKey][index];
+        const schema = SCHEMAS[currentKey];
+        let numVal = value === "" ? null : parseFloat(value);
+        if (numVal !== null && isNaN(numVal)) numVal = null; 
+
+        const field = schema.fields.find(f => f.id === fieldId);
+        if (numVal !== null && numVal > field.max) {
+            alert(`خطأ: الدرجة القصوى هي ${field.max}`); numVal = field.max; document.getElementById(`grade-${index}-${fieldId}`).value = numVal;
+        } else if (numVal !== null && numVal < 0) {
+            numVal = 0; document.getElementById(`grade-${index}-${fieldId}`).value = numVal;
+        }
+
+        student.scores[fieldId] = numVal;
+        if(field.isKey) student.keyScore = numVal || 0; 
+
+        const stats = getStudentStats(student, schema);
+        let totalDisplay = stats.max > 0 ? stats.obtained : "-";
+        
+        const totalCell = document.getElementById(`total-${index}`);
+        if(totalCell) totalCell.innerText = totalDisplay;
+        
+        // تحديث المستوى
+        const levelChar = stats.hasGrade ? calculateLevel(stats.percentage) : "-";
+        const levelClass = stats.hasGrade ? getLevelColorClass(levelChar) : "";
+        const levelCell = document.getElementById(`level-${index}`);
+        if(levelCell) {
+            levelCell.innerText = levelChar;
+            levelCell.className = `level-cell ${levelClass}`;
+        }
+        
+        saveData();
+        const visibleData = dbGrades[currentKey].filter(item => selectedSections.length === 0 || selectedSections.includes(item.section));
+        updateAnalysis(visibleData);
+    }
+    
+    function updateName(index, newName) {
+        if(!newName.trim()) return;
+        dbGrades[currentKey][index].name = newName.trim();
+        saveData();
+        if(isAlphaSort) renderTable();
+    }
+    
+    function handleGradeNavigation(e, r, c) {
+        if(e.key==='Enter') { e.preventDefault(); if(isVerticalMode){let n=document.getElementById(`grade-${r+1}-${c}`);if(n){n.focus();n.select();}} else {let l=Array.from(document.querySelectorAll('.grade-input'));let i=l.indexOf(e.target);if(i>-1&&i<l.length-1){l[i+1].focus();l[i+1].select();}} }
+        else if(e.key==='ArrowDown') { e.preventDefault(); let n=document.getElementById(`grade-${r+1}-${c}`); if(n){n.focus();n.select();} }
+        else if(e.key==='ArrowUp') { e.preventDefault(); let p=document.getElementById(`grade-${r-1}-${c}`); if(p){p.focus();p.select();} }
+    }
+    function toggleVerticalMode() { isVerticalMode = !isVerticalMode; const b=document.getElementById('verticalModeBtn'); b.innerText=isVerticalMode?"⬇️ إدخال عمودي: مفعل":"⬇️ إدخال عمودي: معطل"; b.classList.toggle('active'); }
+    function toggleSortAlpha() { isAlphaSort = !isAlphaSort; const b=document.getElementById('sortAlphaBtn'); b.innerText=isAlphaSort?"🔠 ترتيب أبجدي: مفعل":"🔠 ترتيب أبجدي: معطل"; b.classList.toggle('active'); renderTable(); }
+    
+    function quickAddStudent() { const n=document.getElementById('quickAddName').value.trim(); if(!n) return; const sc={}; SCHEMAS[currentKey].fields.forEach(f=>sc[f.id]=null); const sec=selectedSections.length>0?selectedSections[0]:"عام"; if(!dbGrades[currentKey])dbGrades[currentKey]=[]; dbGrades[currentKey].push({name:n, section:sec, scores:sc, total:0, keyScore:0}); saveData(); renderTable(); document.getElementById('quickAddName').value=""; }
+    
+    function importSectionStudents(sec) { if(!sec || !dbSections[currentKey][sec]) return; const lst=dbSections[currentKey][sec].split('\n').map(s=>s.trim()).filter(s=>s); const sc={}; SCHEMAS[currentKey].fields.forEach(f=>sc[f.id]=null); if(!dbGrades[currentKey])dbGrades[currentKey]=[]; let c=0; lst.forEach(n=>{ if(!dbGrades[currentKey].some(s=>s.name===n)){ dbGrades[currentKey].push({name:n, section:sec, scores:{...sc}, total:0, keyScore:0}); c++; } }); if(c>0){ if(!selectedSections.includes(sec))selectedSections.push(sec); saveData(); renderSectionTabs(); renderTable(); alert(`تم ${c}`); } document.getElementById('bulkImportSelect').value=""; }
+    
+    function renderSectionTabs() {
+        const c=document.getElementById('sectionTabs'); c.innerHTML='';
+        const t=document.createElement('button'); t.className="toggle-all-btn"; t.innerText=selectedSections.length>0?"إلغاء تحديد الكل":"تحديد الكل"; t.onclick=()=>{if(selectedSections.length>0)selectedSections=[]; else if(dbSections[currentKey])selectedSections=Object.keys(dbSections[currentKey]); renderSectionTabs(); renderTable();};
+        if(dbSections[currentKey]) Object.keys(dbSections[currentKey]).forEach(s=>{ const b=document.createElement('button'); b.className=`tab-btn ${selectedSections.includes(s)?"active":""}`; b.innerText=s; b.onclick=()=>{if(selectedSections.includes(s))selectedSections=selectedSections.filter(x=>x!==s); else selectedSections.push(s); renderSectionTabs(); renderTable();}; c.appendChild(b); });
+        c.appendChild(t);
+    }
+    function updateSectionDropdown() { const s=document.getElementById('bulkImportSelect'); s.innerHTML='<option value="">-- اختر شعبة --</option>'; if(dbSections[currentKey]) Object.keys(dbSections[currentKey]).forEach(k=>s.innerHTML+=`<option value="${k}">${k}</option>`); }
+    function deleteItem(idx) { if(confirm("حذف؟")) { dbGrades[currentKey].splice(idx,1); saveData(); renderTable(); } }
+    
+    function updateAnalysis(data) {
+        if(!chartInstance) return;
+        const st = calculateStats(data);
+        const el = id => document.getElementById(id);
+        if(el('statTotal')) el('statTotal').innerText = st.totalStudents;
+        ['Weak','Acc','Good','VGood','Exc'].forEach((k,i)=>el('stat'+k).innerText=st.counts[i]);
+        el('rateLow').innerText=st.lowPct+"%"; el('rateHigh').innerText=st.highPct+"%";
+        chartInstance.data.datasets[0].data=st.counts; chartInstance.update();
+        el('topList').innerHTML=st.top10.map(s=>`<div class="student-item"><span>${s.name} (${s.section})</span><b>${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('');
+        el('bottomList').innerHTML=st.bottom10.map(s=>`<div class="student-item"><span>${s.name} (${s.section})</span><b>${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('');
+    }
+    
+    function openNamesModal() { document.getElementById('namesModal').classList.add('active'); document.getElementById('modalStageSelect').value=currentKey||"5-9"; loadSectionsForModal(); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function loadSectionsForModal() { const s=document.getElementById('modalStageSelect').value, d=document.getElementById('modalSectionList'); d.innerHTML=''; if(dbSections[s])Object.keys(dbSections[s]).forEach(k=>{const b=document.createElement('div'); b.className='section-tag'; b.innerText=k; b.onclick=()=>{document.getElementById('modalSectionName').value=k; document.getElementById('modalNamesText').value=dbSections[s][k];}; d.appendChild(b);}); const n=document.createElement('div'); n.className='section-tag new'; n.innerText='+'; n.onclick=()=>{document.getElementById('modalSectionName').value="";document.getElementById('modalNamesText').value="";}; d.appendChild(n); }
+    function saveSectionNames() { const s=document.getElementById('modalStageSelect').value, n=document.getElementById('modalSectionName').value.trim(), t=document.getElementById('modalNamesText').value; if(!n) return alert("الاسم؟"); if(!dbSections[s]) dbSections[s]={}; dbSections[s][n]=t; saveData(); loadSectionsForModal(); if(s===currentKey) {updateSectionDropdown(); renderSectionTabs();} }
+    function openClearModal() { document.getElementById('clearModal').classList.add('active'); }
+    function executeClear(t) { document.getElementById('clearModal').classList.remove('active'); if(!confirm("أكيد؟"))return; if(t===1||t===3)dbGrades[currentKey]=[]; if(t===2||t===3)delete dbSections[currentKey]; saveData(); if(currentKey){updateSectionDropdown(); renderSectionTabs(); renderTable();} }
+    function downloadBackup() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify({s:dbSections,g:dbGrades,b:dbBehavior})],{type:'application/json'})); a.download='Backup.json'; a.click(); }
+    function restoreBackup(i) { const r=new FileReader(); r.onload=e=>{try{const d=JSON.parse(e.target.result); dbSections=d.s;dbGrades=d.g;if(d.b)dbBehavior=d.b; saveData();location.reload();}catch(x){alert("خطأ");}}; if(i.files[0])r.readAsText(i.files[0]); }
+    function exportToExcel() { const a=document.createElement('a'); a.href='data:application/vnd.ms-excel,'+encodeURIComponent(document.getElementById('gradesTable').outerHTML.replace(/<input.*?value="(.*?)".*?>/g,"$1").replace(/<button.*?<\/button>/g,"")); a.download='Grades.xls'; a.click(); }
+    function initChart() { const c=document.getElementById('analysisChart'); if(c) chartInstance=new Chart(c.getContext('2d'),{type:'bar',data:{labels:['ضعيف','مقبول','جيد','جيد جدا','ممتاز'],datasets:[{data:[0,0,0,0,0],backgroundColor:['#e74c3c','#f39c12','#3498db','#1abc9c','#2ecc71']}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}}); }
+</script>
+</body>
+</html>
