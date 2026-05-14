@@ -82,13 +82,27 @@
         tr:hover { background-color: #f9f9f9; }
         tr.section-group-header td { background-color: #f8f9fa; color: var(--primary); font-weight: bold; text-align: right; padding: 8px 15px; border-top: 2px solid #dfe6e9; }
         
-        .grade-input { width: 100%; height: 100%; border: none; text-align: center; font-family: 'Cairo', sans-serif; font-size: 1rem; background: transparent; outline: none; color: #2c3e50; transition: background 0.2s; }
+        .print-only { display: none; } /* إخفاء نصوص الطباعة في الشاشة العادية */
+
+        .grade-input { 
+            width: 100%; height: 100%; border: none; text-align: center; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-size: 1.1rem; font-weight: bold; background: transparent; outline: none; color: #2c3e50; transition: background 0.2s;
+            direction: ltr; 
+        }
         .grade-input:focus { background-color: #e3f2fd; box-shadow: inset 0 0 0 2px var(--info); }
         
         .name-input-table { width: 100%; border: none; background: transparent; font-family: 'Cairo', sans-serif; font-size: 0.85rem; font-weight: 600; color: #34495e; text-align: right; outline: none; }
         .name-input-table:focus { border-bottom: 1px solid var(--primary); }
 
         td.name-cell { text-align: right; padding-right: 8px; min-width: 180px; max-width: 220px; }
+        
+        td.total-cell, td.section-cell, .stat-num, .behavior-score {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+            direction: ltr;
+            unicode-bidi: isolate;
+        }
+
         td.total-cell { font-weight: 800; color: var(--primary); background-color: #fdfdfd; font-size: 1.1rem; }
         td.level-cell { font-weight: bold; color: #fff; font-size: 0.9rem; text-shadow: 0 0 2px rgba(0,0,0,0.2); }
         td.section-cell { font-size: 0.85rem; color: #7f8c8d; }
@@ -98,7 +112,7 @@
 
         .level-A { background-color: #2ecc71; } .level-B { background-color: #1abc9c; } .level-C { background-color: #3498db; } .level-D { background-color: #f39c12; } .level-E { background-color: #e74c3c; }
 
-        /* السلوك */
+        /* السلوك والخطط والتحليل */
         .behavior-score { font-weight: bold; font-size: 1.1rem; }
         .behavior-score.full-mark { color: #f1c40f !important; text-shadow: 0 0 5px rgba(241, 196, 15, 0.5); }
         .btn-behavior { padding: 4px 10px; font-size: 0.8rem; margin: 0 2px; border-radius: 4px; border:none; cursor:pointer;}
@@ -107,23 +121,33 @@
         .btn-view-log { background-color: #e3f2fd; color: #3498db; border: 1px solid #3498db; }
         .behavior-history { font-size: 0.75rem; color: #888; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; padding:0 5px;}
 
-        /* الخطط */
         .remedial-container, .plan-container { padding: 20px; display: none; }
         .remedial-grid, .plan-grid { display: grid; grid-template-columns: 300px 1fr; gap: 20px; margin-bottom: 20px; }
         .student-select-list { height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; padding: 10px; background: #fff; }
         .student-select-item { padding: 8px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
         .plan-details-form { background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #eee; }
 
-        /* التحليل */
         .analysis-section { padding: 30px; border-top: 1px solid #eee; display: none; background: #fff; }
         .stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 20px; }
         .stat-card { background: #fdfdfd; padding: 8px; border-radius: 6px; border: 1px solid #eee; text-align: center; border-bottom-width: 3px; }
         .stat-card h5 { margin: 0 0 5px 0; font-size: 0.85rem; color: #7f8c8d; }
         .stat-num { font-size: 1.4rem; font-weight: bold; margin: 0; }
         .rates-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .rate-card { padding: 15px; border-radius: 8px; text-align: center; border: 1px solid; }
+        .rate-card.red { background-color: #fff5f5; border-color: #ff7675; color: #e17055; }
+        .rate-card.green { background-color: #f0fdf4; border-color: #00b894; color: #00b894; }
+        .rate-box h5 { margin: 0 0 10px; font-size: 1.1rem; }
+        .rate-val { font-size: 2rem; font-weight: bold; font-family: 'Segoe UI', Tahoma, sans-serif; direction:ltr; unicode-bidi:isolate; display:inline-block; }
         .lists-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; padding-top: 20px; border-top: 1px dashed #dfe6e9; }
         .list-card { border: 1px solid #eee; border-radius: 8px; padding: 15px; }
+        .list-card h4 { margin-top: 0; border-bottom: 2px solid; padding-bottom: 10px; font-size: 1.1rem; margin-bottom: 10px; }
+        .top-list h4 { border-color: #2ecc71; color: #27ae60; }
+        .bottom-list h4 { border-color: #ff7675; color: #e74c3c; }
         .student-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f5f5f5; }
+        .student-item:last-child { border-bottom: none; }
+        .student-score { font-weight: bold; font-family: monospace; font-size: 1.1em; }
+        .top-list .student-score { color: #27ae60; }
+        .bottom-list .student-score { color: #e74c3c; }
 
         /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1500; align-items: center; justify-content: center; }
@@ -138,6 +162,10 @@
         .log-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #eee; background: #fafafa; margin-bottom: 4px; border-radius: 4px; align-items: center; }
         .btn-delete-log { background-color: #ffeaea; color: #d63031; border: 1px solid #fab1a0; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
         
+        .section-tag { display: inline-block; padding: 5px 10px; background: #f0f2f5; border: 1px solid #ddd; border-radius: 5px; margin: 2px; cursor: pointer; font-size: 0.9rem; }
+        .section-tag:hover { background: #e3e6ea; }
+        .section-tag.new { background: #eaf6ff; color: #2980b9; font-weight: bold; }
+
         #notification-area { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; }
         .notif { padding: 10px 20px; border-radius: 5px; color: white; margin-bottom: 5px; opacity: 0; transition: 0.3s; transform: translateY(-20px); }
         .notif.show { opacity: 1; transform: translateY(0); }
@@ -149,25 +177,50 @@
             .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
 
-        /* Print Styles */
+        /* --- إعدادات الطباعة الذكية والجديدة كلياً --- */
         @media print {
-            @page { size: landscape; margin: 1cm; }
-            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; zoom: 90%; }
-            .container { box-shadow: none; border: none; margin: 0; width: 100%; max-width: 100%; }
-            .workspace-toolbar, .section-tabs-container, .btn, .action-btn, #landingPage, .modal, .input-row-add, .mode-switcher, .btn-mini-action, .remedial-grid, .plan-grid { display: none !important; }
+            @page { size: landscape; margin: 0.5cm; }
+            body { background: white; zoom: 100%; font-family: 'Cairo', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+            
+            .container { box-shadow: none; border: none; margin: 0; width: 100%; max-width: none; }
+            
+            /* إخفاء أدوات الشاشة وإخفاء حقول الـ input بالكامل */
+            .workspace-toolbar, .section-tabs-container, .btn, .action-btn, #landingPage, .modal, .input-row-add, .mode-switcher, .remedial-grid, .plan-grid, .screen-only { display: none !important; }
             .workspace { display: block !important; }
+            .no-print { display: none !important; }
+            
+            /* إظهار نصوص الطباعة البديلة عن الـ input */
+            .print-only { display: inline-block !important; }
+
             .print-header { display: block !important; text-align: center; border-bottom: 2px solid #333; margin-bottom: 10px; padding-bottom: 5px; }
-            table { border: 1px solid #000; width: 100%; font-size: 10pt; page-break-after: always; } 
-            th, td { border: 1px solid #000; padding: 4px; color: black; text-align: center; height: auto; page-break-inside: avoid; }
+            
+            /* تصميم الجدول المرن */
+            table { border: 1px solid #000; width: 100% !important; border-collapse: collapse; table-layout: auto !important; margin-bottom: 0 !important; } 
+            th { border: 1px solid #000; padding: 2px !important; color: black; text-align: center; font-size: 9pt !important; background-color: #f0f0f0 !important; }
+            
+            /* ارتفاع الصف 24px يتسع لـ 25 طالب بالراحة في صفحة A4 */
+            td { border: 1px solid #000; padding: 2px !important; color: black; text-align: center; font-size: 10pt !important; height: 24px !important; page-break-inside: avoid; }
+            
+            /* تكرار الهيدر */
             thead { display: table-header-group; }
-            tfoot { display: table-footer-group; }
-            .print-title-row { display: table-row !important; }
-            .print-title-row th { background-color: #fff !important; border: none !important; border-bottom: 2px solid #000 !important; font-size: 1.4rem; padding: 15px; }
-            tr.section-group-header { display: table-row; }
-            tr.section-group-header td { background-color: #ddd !important; color: #000 !important; border: 1px solid #000; font-weight: bold; text-align: center; font-size: 1.2rem; }
-            td.name-cell { font-size: 10pt !important; font-weight: bold !important; min-width: 250px !important; max-width: none !important; width: 35% !important; text-align: right !important; padding-right: 8px !important; white-space: nowrap !important; }
-            .name-input-table { text-align: right !important; padding: 0 !important; font-size: 10pt !important; border: none !important; width: 100% !important; font-weight: bold !important; background: transparent !important; }
-            .grade-input { text-align: center !important; padding: 0 !important; font-size: 10pt !important; border: none !important; background: transparent !important; }
+            
+            /* فواصل الصفحات (كل 25 طالب) */
+            tbody.section-group { page-break-before: always; break-before: page; }
+            table#gradesTable tbody.section-group:first-of-type { page-break-before: auto; break-before: auto; }
+            tbody.page-break-tbody { page-break-before: always; break-before: page; }
+
+            /* اختصار العناوين */
+            .print-title-row th { background-color: #fff !important; border: none !important; border-bottom: 2px solid #000 !important; font-size: 1.1rem !important; padding: 4px !important; }
+            tr.section-group-header td { background-color: #e9ecef !important; color: #000 !important; border: 1px solid #000; font-weight: bold; text-align: center; font-size: 1rem !important; padding: 4px !important; }
+            
+            /* توسيع عمود الاسم ليظهر بالكامل
+               - أخذنا 30% من عرض الصفحة
+               - منعنا التفاف النص (nowrap) حتى لا يقتطع
+               - كبرنا حجم الخط قليلاً للوضوح 
+            */
+            td.name-cell { width: 35% !important; min-width: 260px !important; text-align: right !important; padding-right: 8px !important; white-space: nowrap !important; overflow: visible !important; }
+            td.name-cell .print-only { font-weight: bold; font-size: 11pt !important; display: block !important; white-space: nowrap !important; overflow: visible !important; }
+            
             #analysisSection { display: none !important; }
             .analysis-print-container { display: block !important; }
             .grade-report-page { page-break-before: always; padding: 20px; border: 1px solid #ccc; margin-bottom: 20px; }
@@ -182,21 +235,15 @@
             .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
             .bar { width: 80%; border: 2px solid #000; border-bottom: none; min-height: 2px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .bar-label { font-size: 0.85rem; margin-top: 5px; text-align: center; font-weight:bold;}
-            .bar-val { font-size: 0.95rem; font-weight: bold; margin-bottom: 2px; }
+            .bar-val { font-size: 0.95rem; font-weight: bold; margin-bottom: 2px; font-family: 'Segoe UI', Tahoma, sans-serif !important; direction: ltr !important;}
             
-            /* طباعة الخطط */
             #remedialSection, #enrichmentSection { display: block !important; border:none; padding:0; }
             .remedial-container, .plan-container { display: block !important; padding: 0 !important; }
-            
-            /* جدول سلوك الطباعة */
             .behavior-log-table { width: 100%; border-collapse: collapse; margin-top: 20px; page-break-inside: avoid; }
             .behavior-log-table th, .behavior-log-table td { border: 1px solid #ccc; padding: 8px; text-align: right; }
             .behavior-log-table th { background: #f0f0f0; font-weight: bold; }
-            
             .print-footer { display: flex !important; justify-content: space-between; margin-top: 30px; padding-top: 10px; border-top: 1px solid #ccc; page-break-inside: avoid; }
-            input[type="number"], input[type="text"], input[type="date"] { border: none; background: none; width: auto; appearance: textfield; }
         }
-        .print-header, .print-footer { display: none; }
     </style>
 </head>
 <body>
@@ -236,7 +283,7 @@
                     <button class="mode-btn" id="modeEnrichmentBtn" onclick="switchMode('enrichment')">💎 الخطط الإثرائية</button>
                 </div>
             </div>
-            <div class="toolbar-section-right" style="display: flex; align-items: center; gap: 5px;">
+            <div class="toolbar-section-right">
                  <label style="font-size:0.9rem; color:#555;">📥 إدراج شعبة:</label>
                  <select id="bulkImportSelect" onchange="importSectionStudents(this.value)" style="min-width:150px; border-color: var(--accent);"></select>
             </div>
@@ -264,7 +311,7 @@
     <div class="table-wrapper" id="gradesTableWrapper">
         <table id="gradesTable">
             <thead id="tableHead"></thead>
-            <tbody id="tableBody"></tbody>
+            <!-- The body gets generated here dynamically -->
         </table>
         
         <div id="gradesControls" class="input-row-add" style="padding:10px; background:#fff; border-bottom:1px solid #eee; display:flex; gap:10px; align-items:center; justify-content:center;">
@@ -312,7 +359,7 @@
         </div>
         <h3 style="border-top:1px solid #eee; padding-top:20px;">📋 جدول متابعة الخطط العلاجية</h3>
         <table style="width:100%; border-collapse:collapse; margin-top:10px;">
-            <thead><tr style="background:#f1f2f6;"><th>الاسم</th><th>الشعبة</th><th>مجال الضعف</th><th>فترة التنفيذ</th><th>الإجراء العلاجي</th><th>حالة التحسن</th><th>إجراءات</th></tr></thead>
+            <thead><tr style="background:#f1f2f6;"><th>الاسم</th><th class="no-print">الشعبة</th><th>مجال الضعف</th><th>فترة التنفيذ</th><th>الإجراء العلاجي</th><th>حالة التحسن</th><th class="no-print">إجراءات</th></tr></thead>
             <tbody id="remedialTableBody"></tbody>
         </table>
     </div>
@@ -350,7 +397,7 @@
         </div>
         <h3 style="border-top:1px solid #eee; padding-top:20px; color:var(--enrich-color);">📋 متابعة الخطط الإثرائية</h3>
         <table style="width:100%; border-collapse:collapse; margin-top:10px;">
-            <thead><tr style="background:#f3e5f5;"><th>الاسم</th><th>الشعبة</th><th>المهارة المستهدفة</th><th>فترة التنفيذ</th><th>النشاط الإثرائي</th><th>مستوى الإنجاز</th><th>إجراءات</th></tr></thead>
+            <thead><tr style="background:#f3e5f5;"><th>الاسم</th><th class="no-print">الشعبة</th><th>المهارة المستهدفة</th><th>فترة التنفيذ</th><th>النشاط الإثرائي</th><th>مستوى الإنجاز</th><th class="no-print">إجراءات</th></tr></thead>
             <tbody id="enrichmentTableBody"></tbody>
         </table>
     </div>
@@ -396,7 +443,12 @@
         <div style="margin-bottom:10px;"><label>المرحلة:</label> <select id="modalStageSelect" onchange="loadSectionsForModal()" style="width:100%"><option value="5-9">5-9</option><option value="10-11">10-11</option><option value="12">12</option></select></div>
         <div style="margin-bottom:15px;"><label>الشعبة:</label> <div id="modalSectionList" class="modal-section-list"></div> <input type="text" id="modalSectionName" placeholder="اسم الشعبة..." style="width:100%; padding:8px; border:1px solid #ddd; margin-top:5px;"></div>
         <label>الطلاب:</label><textarea id="modalNamesText"></textarea>
-        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:15px;"><button class="btn btn-accent" onclick="saveSectionNames()">💾 حفظ</button><button class="btn btn-danger" onclick="document.getElementById('namesModal').classList.remove('active')">إغلاق</button></div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:15px;">
+            <!-- الزر الجديد لحذف الشعبة المحددة -->
+            <button class="btn btn-warning" onclick="deleteCurrentSection()">🗑️ حذف الشعبة</button>
+            <button class="btn btn-accent" onclick="saveSectionNames()">💾 حفظ</button>
+            <button class="btn btn-danger" onclick="document.getElementById('namesModal').classList.remove('active')">إغلاق</button>
+        </div>
     </div>
 </div>
 
@@ -453,6 +505,12 @@
 </div>
 
 <script>
+    // --- دالة تحويل الأرقام الهندية (١٢٣) إلى أرقام عربية قياسية (123) ---
+    const toEng = (str) => {
+        if (typeof str !== 'string') return str;
+        return str.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+    };
+
     const REMEDIAL_DATA = {
         "المهارات الجغرافية (الخرائط)": {
             "ضعف تحديد المواقع على الخريطة": "تدريب عملي على الأطلس، Google Earth، مسابقات توقيع الخرائط",
@@ -488,9 +546,9 @@
     };
 
     const SCHEMAS = {
-        '5-9': { name: 'الصفوف (5-9)', total: 60, fields: [{ id: 'oral', label: 'العرض<br>الشفوي<br>(10)', max: 10 }, { id: 'q1', label: 'السؤال<br>القصير 1<br>(5)', max: 5 }, { id: 'q2', label: 'السؤال<br>القصير 2<br>(5)', max: 5 }, { id: 'ex1', label: 'الاختبار<br>القصير 1<br>(15)', max: 15, isKey: true }, { id: 'ex2', label: 'الاختبار<br>القصير 2<br>(15)', max: 15 }, { id: 'rep', label: 'التقرير<br>(10)', max: 10 }] },
-        '10-11': { name: 'الصفوف (10-11)', total: 40, fields: [{ id: 'q1', label: 'السؤال<br>القصير 1<br>(5)', max: 5 }, { id: 'q2', label: 'السؤال<br>القصير 2<br>(5)', max: 5 }, { id: 'ex1', label: 'الاختبار<br>القصير 1<br>(10)', max: 10, isKey: true }, { id: 'ex2', label: 'الاختبار<br>القصير 2<br>(10)', max: 10 }, { id: 'rep', label: 'التقرير<br>(10)', max: 10 }] },
-        '12': { name: 'الصف (12)', total: 30, fields: [{ id: 'shortQ', label: 'الأسئلة<br>القصيرة<br>(5)', max: 5 }, { id: 'ex1', label: 'الاختبار<br>القصير 1<br>(10)', max: 10, isKey: true }, { id: 'ex2', label: 'الاختبار<br>القصير 2<br>(10)', max: 10 }, { id: 'rep', label: 'التقرير<br>(5)', max: 5 }] }
+        '5-9': { name: 'الصفوف (5-9)', total: 60, fields: [{ id: 'oral', label: 'العرض<br>الشفوي', max: 10 }, { id: 'q1', label: 'السؤال<br>1', max: 5 }, { id: 'q2', label: 'السؤال<br>2', max: 5 }, { id: 'ex1', label: 'اختبار<br>1', max: 15, isKey: true }, { id: 'ex2', label: 'اختبار<br>2', max: 15 }, { id: 'rep', label: 'التقرير', max: 10 }] },
+        '10-11': { name: 'الصفوف (10-11)', total: 40, fields: [{ id: 'q1', label: 'السؤال<br>1', max: 5 }, { id: 'q2', label: 'السؤال<br>2', max: 5 }, { id: 'ex1', label: 'اختبار<br>1', max: 10, isKey: true }, { id: 'ex2', label: 'اختبار<br>2', max: 10 }, { id: 'rep', label: 'التقرير', max: 10 }] },
+        '12': { name: 'الصف (12)', total: 30, fields: [{ id: 'shortQ', label: 'الأسئلة<br>القصيرة', max: 5 }, { id: 'ex1', label: 'اختبار<br>1', max: 10, isKey: true }, { id: 'ex2', label: 'اختبار<br>2', max: 10 }, { id: 'rep', label: 'التقرير', max: 5 }] }
     };
 
     let currentKey = null;
@@ -618,6 +676,7 @@
 
     function parseGrade(sectionName) {
         if(!sectionName) return 999;
+        sectionName = toEng(sectionName);
         const match = sectionName.match(/(\d+)|(خامس|سادس|سابع|ثامن|تاسع|عاشر|حادي|ثاني)/);
         if(match) {
             const val = match[0];
@@ -704,7 +763,7 @@
                 const realIndex = plans.indexOf(p);
                 let statusColor = p.status === 'done' ? '#2ecc71' : (p.status === 'progress' ? '#3498db' : '#95a5a6');
                 let period = p.startDate && p.endDate ? `${p.startDate} <br>إلى<br> ${p.endDate}` : '-';
-                tbody.innerHTML += `<tr><td>${p.name}</td><td>${p.section}</td><td>${p.weakness}</td><td style="font-size:0.85rem; color:#666;">${period}</td><td>${p.activity}</td><td><select onchange="updateRemedialStatus(${realIndex}, this.value)" style="padding:2px; font-size:0.8rem; border-color:${statusColor}; color:${statusColor}; font-weight:bold;"><option value="new" ${p.status==='new'?'selected':''}>جاري التنفيذ</option><option value="progress" ${p.status==='progress'?'selected':''}>تحسن</option><option value="done" ${p.status==='done'?'selected':''}>أتقن المهارة</option></select></td><td><button style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteRemedialPlan(${realIndex})">✕</button></td></tr>`;
+                tbody.innerHTML += `<tr><td>${p.name}</td><td class="hide-in-print">${p.section}</td><td>${p.weakness}</td><td style="font-size:0.85rem; color:#666; font-family: 'Segoe UI', Tahoma, sans-serif; direction:ltr;">${period}</td><td>${p.activity}</td><td><select onchange="updateRemedialStatus(${realIndex}, this.value)" style="padding:2px; font-size:0.8rem; border-color:${statusColor}; color:${statusColor}; font-weight:bold;"><option value="new" ${p.status==='new'?'selected':''}>جاري التنفيذ</option><option value="progress" ${p.status==='progress'?'selected':''}>تحسن</option><option value="done" ${p.status==='done'?'selected':''}>أتقن المهارة</option></select></td><td class="hide-in-print"><button style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteRemedialPlan(${realIndex})">✕</button></td></tr>`;
             });
         }
     }
@@ -733,7 +792,7 @@
                 const realIndex = plans.indexOf(p);
                 let statusColor = p.status === 'done' ? '#2ecc71' : (p.status === 'progress' ? '#9b59b6' : '#95a5a6');
                 let period = p.startDate && p.endDate ? `${p.startDate} <br>إلى<br> ${p.endDate}` : '-';
-                tbody.innerHTML += `<tr><td>${p.name}</td><td>${p.section}</td><td>${p.skill}</td><td style="font-size:0.85rem; color:#666;">${period}</td><td>${p.activity}</td><td><select onchange="updateEnrichmentStatus(${realIndex}, this.value)" style="padding:2px; font-size:0.8rem; border-color:${statusColor}; color:${statusColor}; font-weight:bold;"><option value="new" ${p.status==='new'?'selected':''}>جديد</option><option value="progress" ${p.status==='progress'?'selected':''}>قيد الإنجاز</option><option value="done" ${p.status==='done'?'selected':''}>تم الإنجاز</option></select></td><td><button style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteEnrichmentPlan(${realIndex})">✕</button></td></tr>`;
+                tbody.innerHTML += `<tr><td>${p.name}</td><td class="hide-in-print">${p.section}</td><td>${p.skill}</td><td style="font-size:0.85rem; color:#666; font-family: 'Segoe UI', Tahoma, sans-serif; direction:ltr;">${period}</td><td>${p.activity}</td><td><select onchange="updateEnrichmentStatus(${realIndex}, this.value)" style="padding:2px; font-size:0.8rem; border-color:${statusColor}; color:${statusColor}; font-weight:bold;"><option value="new" ${p.status==='new'?'selected':''}>جديد</option><option value="progress" ${p.status==='progress'?'selected':''}>قيد الإنجاز</option><option value="done" ${p.status==='done'?'selected':''}>تم الإنجاز</option></select></td><td class="hide-in-print"><button style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteEnrichmentPlan(${realIndex})">✕</button></td></tr>`;
             });
         }
     }
@@ -805,9 +864,9 @@
              groupData.forEach(p => {
                  let statusText = p.status === 'done' ? 'أتقن المهارة' : (p.status === 'progress' ? 'تحسن' : 'جاري التنفيذ');
                  let period = p.startDate && p.endDate ? `${p.startDate} إلى ${p.endDate}` : '-';
-                 rows += `<tr><td>${p.name}</td><td>${p.section}</td><td>${p.weakness}</td><td>${period}</td><td>${p.activity}</td><td>${statusText}</td></tr>`;
+                 rows += `<tr><td>${p.name}</td><td>${p.weakness}</td><td style="font-family: 'Segoe UI', sans-serif; direction:ltr;">${period}</td><td>${p.activity}</td><td>${statusText}</td></tr>`;
              });
-             pageDiv.innerHTML = `<div class="analysis-print-title">${title}</div><table class="behavior-log-table"><thead><tr><th>الاسم</th><th>الشعبة</th><th>مظهر الضعف</th><th>الفترة</th><th>الإجراء العلاجي</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table>`;
+             pageDiv.innerHTML = `<div class="analysis-print-title">${title}</div><table class="behavior-log-table"><thead><tr><th>الاسم</th><th>مظهر الضعف</th><th>الفترة</th><th>الإجراء العلاجي</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table>`;
              container.appendChild(pageDiv);
         });
         window.print();
@@ -833,9 +892,9 @@
              groupData.forEach(p => {
                  let statusText = p.status === 'done' ? 'تم الإنجاز' : (p.status === 'progress' ? 'قيد الإنجاز' : 'جديد');
                  let period = p.startDate && p.endDate ? `${p.startDate} إلى ${p.endDate}` : '-';
-                 rows += `<tr><td>${p.name}</td><td>${p.section}</td><td>${p.skill}</td><td>${period}</td><td>${p.activity}</td><td>${statusText}</td></tr>`;
+                 rows += `<tr><td>${p.name}</td><td>${p.skill}</td><td style="font-family: 'Segoe UI', sans-serif; direction:ltr;">${period}</td><td>${p.activity}</td><td>${statusText}</td></tr>`;
              });
-             pageDiv.innerHTML = `<div class="analysis-print-title">${title}</div><table class="behavior-log-table"><thead><tr><th>الاسم</th><th>الشعبة</th><th>المهارة المستهدفة</th><th>الفترة</th><th>النشاط الإثرائي</th><th>مستوى الإنجاز</th></tr></thead><tbody>${rows}</tbody></table>`;
+             pageDiv.innerHTML = `<div class="analysis-print-title">${title}</div><table class="behavior-log-table"><thead><tr><th>الاسم</th><th>المهارة المستهدفة</th><th>الفترة</th><th>النشاط الإثرائي</th><th>مستوى الإنجاز</th></tr></thead><tbody>${rows}</tbody></table>`;
              container.appendChild(pageDiv);
         });
         window.print();
@@ -873,28 +932,26 @@
         renderTable();
     }
 
+    // دالة بناء الجدول المعدلة للطباعة المرنة والذكية (25 طالب لكل صفحة مع تكرار العناوين)
     function renderTable() {
         const table = document.getElementById('gradesTable');
         table.innerHTML = ''; 
         const schema = SCHEMAS[currentKey];
-        const thead = document.createElement('thead');
         
-        let printTitle = currentMode === 'grades' ? `سجل درجات الدراسات الاجتماعية - ${schema.name}` : `سجل السلوك والمواظبة - ${schema.name}`;
-        if (selectedSections.length > 0) printTitle += ` (شعب محددة)`;
-
-        let hHtml = `<tr class="print-title-row"><th colspan="100%">${printTitle}</th></tr><tr><th style="width:40px">#</th><th style="text-align:right; min-width:200px">الاسم</th><th style="width:70px">الشعبة</th>`;
+        let printTitle = currentMode === 'grades' ? `سجل درجات - ${schema.name}` : `سجل السلوك - ${schema.name}`;
+        
+        // بناء الرأس العام للجدول وتكراره
+        let hHtml = `<tr class="print-title-row"><th colspan="100%">${printTitle}</th></tr><tr><th style="width:30px">#</th><th style="text-align:right;">الاسم</th><th style="width:60px" class="no-print">الشعبة</th>`;
         if (currentMode === 'grades') {
             schema.fields.forEach(f => {
-                hHtml += `<th style="width:70px">
-                    ${f.label}
-                    <br>
-                    <button class="btn-mini-action" onclick="giveFullMarkToAll('${f.id}')" title="إعطاء الدرجة الكاملة للجميع">✅</button>
-                </th>`;
+                hHtml += `<th>${f.label}<br><button class="btn-mini-action no-print" onclick="giveFullMarkToAll('${f.id}')">✅</button></th>`;
             });
-            hHtml += `<th>المجموع<br>(${schema.total})</th><th>المستوى</th><th style="width:60px">حذف</th></tr>`;
+            hHtml += `<th>المجموع<br>(${schema.total})</th><th>المستوى</th><th style="width:50px" class="no-print">إجراء</th></tr>`;
         } else {
-            hHtml += `<th>نقاط السلوك<br>(من 10)</th><th>إجراءات سريعة</th><th>آخر ملاحظة (مع التاريخ)</th></tr>`;
+            hHtml += `<th>الدرجة<br>(10)</th><th class="no-print">إجراءات سريعة</th><th>السجل (مع التاريخ)</th></tr>`;
         }
+        
+        const thead = document.createElement('thead');
         thead.innerHTML = hHtml;
         table.appendChild(thead);
 
@@ -910,7 +967,8 @@
         
         let currentSectionGroup = null;
         let tbody = null;
-        let counter = 1;
+        let counter = 1;         
+        let sectionRowCount = 0; 
         let printGroups = {}; 
 
         data.forEach((item, index) => {
@@ -918,42 +976,59 @@
             if (!printGroups[groupKey]) printGroups[groupKey] = [];
             printGroups[groupKey].push(item);
 
+            // شعبة جديدة
             if (item.section !== currentSectionGroup) {
                 currentSectionGroup = item.section;
+                sectionRowCount = 0;
+                
                 tbody = document.createElement('tbody');
                 tbody.className = "section-group"; 
+                
                 const groupHeader = document.createElement('tr');
                 groupHeader.className = "section-group-header";
-                const colSpan = currentMode === 'grades' ? (5 + schema.fields.length) : 6;
-                groupHeader.innerHTML = `<td colspan="${colSpan}">الشعبة: ${currentSectionGroup}</td>`;
+                groupHeader.innerHTML = `<td colspan="100%">الشعبة: ${currentSectionGroup}</td>`;
                 tbody.appendChild(groupHeader);
                 table.appendChild(tbody);
             }
 
+            // فاصل صفحة كل 25 طالب
+            if (sectionRowCount === 25) {
+                tbody = document.createElement('tbody');
+                tbody.className = "page-break-tbody";
+                table.appendChild(tbody);
+                sectionRowCount = 0; 
+            }
+
+            sectionRowCount++;
+            
             const originalIndex = (dbGrades[currentKey] || []).indexOf(item); 
             const tr = document.createElement('tr');
             
+            // إظهار span للطباعة وإخفاء input، هذا يمنع اقتصاص الأسماء والدرجات
             let html = `<td>${counter++}</td>
                         <td class="name-cell">
-                            <input type="text" class="name-input-table" value="${item.name}" onchange="updateName(${originalIndex}, this.value)">
+                            <span class="print-only" id="print-name-${originalIndex}">${item.name}</span>
+                            <input type="text" class="name-input-table screen-only" value="${item.name}" onchange="updateName(${originalIndex}, this.value)">
                         </td>
-                        <td class="section-cell">${item.section}</td>`;
+                        <td class="section-cell no-print">${item.section}</td>`;
             
             if (currentMode === 'grades') {
                 schema.fields.forEach(f => {
                     let val = item.scores[f.id] || "";
-                    html += `<td><input type="number" class="grade-input" id="grade-${originalIndex}-${f.id}" value="${val === null ? '' : val}" min="0" max="${f.max}" step="0.5" onkeydown="handleGradeNavigation(event, ${originalIndex}, '${f.id}')" onchange="updateGrade(${originalIndex}, '${f.id}', this.value)"></td>`;
+                    html += `<td>
+                                <span class="print-only grade-print-span" id="print-grade-${originalIndex}-${f.id}">${val === null ? '' : val}</span>
+                                <input type="text" inputmode="decimal" class="grade-input screen-only" id="grade-${originalIndex}-${f.id}" value="${val === null ? '' : val}" onkeydown="handleGradeNavigation(event, ${originalIndex}, '${f.id}')" onchange="updateGrade(${originalIndex}, '${f.id}', this.value)">
+                             </td>`;
                 });
                 
                 const stats = getStudentStats(item, schema);
-                // التعديل: إظهار الرقم فقط
                 let totalDisplay = stats.hasGrade ? stats.obtained : "-";
                 let levelChar = stats.hasGrade ? calculateLevel(stats.percentage) : "-";
                 let levelClass = stats.hasGrade ? getLevelColorClass(levelChar) : "";
                 
                 html += `<td class="total-cell" id="total-${originalIndex}">${totalDisplay}</td>
                          <td class="level-cell ${levelClass}" id="level-${originalIndex}">${levelChar}</td>
-                         <td><button class="action-btn del-btn" onclick="deleteItem(${originalIndex})">✕</button></td>`;
+                         <td class="no-print"><button class="action-btn del-btn" onclick="deleteItem(${originalIndex})">✕</button></td>`;
             } else {
                 let bData = getBehaviorData(item.name, item.section);
                 let score = bData ? bData.score : 0; 
@@ -965,7 +1040,7 @@
                 }
                 
                 html += `<td><span class="behavior-score ${score >= 10 ? 'full-mark' : ''}" style="color:${score < 0 ? 'red' : 'green'}">${score}</span></td>
-                         <td>
+                         <td class="no-print">
                             <button class="btn-behavior btn-pos" title="إضافة تعزيز" onclick="openBehaviorModal(${originalIndex}, 'pos')">👍</button>
                             <button class="btn-behavior btn-neg" title="إضافة تنبيه" onclick="openBehaviorModal(${originalIndex}, 'neg')">👎</button>
                             <button class="btn-behavior btn-view-log" title="سجل الملاحظات / حذف" onclick="openBehaviorModal(${originalIndex}, 'view')">📋</button>
@@ -986,8 +1061,7 @@
             buildBehaviorPrintReport(printGroups);
         }
     }
-    
-    // دالة مساعدة لحساب مجموع الطالب الحالي
+
     function getStudentStats(student, schema) {
         let obtained = 0;
         let max = 0;
@@ -1012,7 +1086,6 @@
         return { obtained: parseFloat(obtained.toFixed(1)), max, percentage, hasGrade };
     }
 
-    // --- منطق السلوك ---
     function getBehaviorData(name, section) {
         if (!dbBehavior[currentKey]) dbBehavior[currentKey] = [];
         return dbBehavior[currentKey].find(b => b.name === name && b.section === section);
@@ -1130,8 +1203,8 @@
                 <div style="page-break-before: always;"></div>
                 <div class="analysis-print-title">قوائم الطلبة - الصف ${key}</div>
                 <div class="lists-wrapper">
-                    <div class="list-card top-list"><h4>🌟 العشرة الأوائل</h4>${stats.top10.map(s => `<div class="student-item"><span>${s.name} (${s.section})</span><b>${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('')}</div>
-                    <div class="list-card bottom-list"><h4>⚠️ بحاجة لمتابعة (أقل 10)</h4>${stats.bottom10.map(s => `<div class="student-item"><span>${s.name} (${s.section})</span><b>${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('')}</div>
+                    <div class="list-card top-list"><h4>🌟 العشرة الأوائل</h4>${stats.top10.map(s => `<div class="student-item"><span>${s.name} (${s.section})</span><b style="font-family:'Segoe UI',sans-serif;">${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('')}</div>
+                    <div class="list-card bottom-list"><h4>⚠️ بحاجة لمتابعة (أقل 10)</h4>${stats.bottom10.map(s => `<div class="student-item"><span>${s.name} (${s.section})</span><b style="font-family:'Segoe UI',sans-serif;">${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('')}</div>
                 </div>
             `;
             container.appendChild(pageDiv);
@@ -1152,8 +1225,8 @@
             groupData.forEach(student => {
                 let bData = getBehaviorData(student.name, student.section);
                 if (bData && bData.logs.length > 0) {
-                    let logStr = bData.logs.map(l => `[${l.date}] ${l.reason} (${l.points > 0 ? '+' : ''}${l.points})`).join('<br>');
-                    behaviorTableRows += `<tr><td>${student.name}</td><td>${student.section}</td><td style="font-weight:bold; color:${bData.score<5?'red':'green'}">${bData.score}</td><td style="font-size:0.8rem; text-align:right;">${logStr}</td></tr>`;
+                    let logStr = bData.logs.map(l => `<span style="font-family:'Segoe UI',sans-serif;">[${l.date}]</span> ${l.reason} (<span style="font-family:'Segoe UI',sans-serif;">${l.points > 0 ? '+' : ''}${l.points}</span>)`).join('<br>');
+                    behaviorTableRows += `<tr><td>${student.name}</td><td class="hide-in-print">${student.section}</td><td style="font-weight:bold; font-family:'Segoe UI',sans-serif; color:${bData.score<5?'red':'green'}">${bData.score}</td><td style="font-size:0.8rem; text-align:right;">${logStr}</td></tr>`;
                 }
             });
 
@@ -1162,7 +1235,7 @@
             pageDiv.innerHTML = `
                 <div class="analysis-print-title">${title}</div>
                 <table class="behavior-log-table">
-                    <thead><tr><th style="width:20%">الاسم</th><th style="width:10%">الشعبة</th><th style="width:10%">الدرجة</th><th>سجل الملاحظات</th></tr></thead>
+                    <thead><tr><th style="width:20%">الاسم</th><th style="width:10%" class="hide-in-print">الشعبة</th><th style="width:10%">الدرجة</th><th>سجل الملاحظات</th></tr></thead>
                     <tbody>${behaviorTableRows}</tbody>
                 </table>
             `;
@@ -1209,26 +1282,34 @@
     function updateGrade(index, fieldId, value) {
         const student = dbGrades[currentKey][index];
         const schema = SCHEMAS[currentKey];
-        let numVal = value === "" ? null : parseFloat(value);
+        
+        let engValue = toEng(value);
+        if (engValue) engValue = engValue.replace(',', '.');
+        
+        let numVal = engValue === "" ? null : parseFloat(engValue);
         if (numVal !== null && isNaN(numVal)) numVal = null; 
 
         const field = schema.fields.find(f => f.id === fieldId);
         if (numVal !== null && numVal > field.max) {
-            alert(`خطأ: الدرجة القصوى هي ${field.max}`); numVal = field.max; document.getElementById(`grade-${index}-${fieldId}`).value = numVal;
+            alert(`خطأ: الدرجة القصوى هي ${field.max}`); 
+            numVal = field.max; 
         } else if (numVal !== null && numVal < 0) {
-            numVal = 0; document.getElementById(`grade-${index}-${fieldId}`).value = numVal;
+            numVal = 0; 
         }
+        
+        document.getElementById(`grade-${index}-${fieldId}`).value = numVal !== null ? numVal : '';
+        const printSpan = document.getElementById(`print-grade-${index}-${fieldId}`);
+        if(printSpan) printSpan.innerText = numVal !== null ? numVal : '';
 
         student.scores[fieldId] = numVal;
         if(field.isKey) student.keyScore = numVal || 0; 
 
         const stats = getStudentStats(student, schema);
-        let totalDisplay = stats.max > 0 ? stats.obtained : "-";
+        let totalDisplay = stats.hasGrade ? stats.obtained : "-";
         
         const totalCell = document.getElementById(`total-${index}`);
         if(totalCell) totalCell.innerText = totalDisplay;
         
-        // تحديث المستوى
         const levelChar = stats.hasGrade ? calculateLevel(stats.percentage) : "-";
         const levelClass = stats.hasGrade ? getLevelColorClass(levelChar) : "";
         const levelCell = document.getElementById(`level-${index}`);
@@ -1243,9 +1324,14 @@
     }
     
     function updateName(index, newName) {
-        if(!newName.trim()) return;
-        dbGrades[currentKey][index].name = newName.trim();
+        newName = toEng(newName.trim()); 
+        if(!newName) return;
+        dbGrades[currentKey][index].name = newName;
         saveData();
+        
+        const pName = document.getElementById(`print-name-${index}`);
+        if(pName) pName.innerText = newName;
+        
         if(isAlphaSort) renderTable();
     }
     
@@ -1257,9 +1343,33 @@
     function toggleVerticalMode() { isVerticalMode = !isVerticalMode; const b=document.getElementById('verticalModeBtn'); b.innerText=isVerticalMode?"⬇️ إدخال عمودي: مفعل":"⬇️ إدخال عمودي: معطل"; b.classList.toggle('active'); }
     function toggleSortAlpha() { isAlphaSort = !isAlphaSort; const b=document.getElementById('sortAlphaBtn'); b.innerText=isAlphaSort?"🔠 ترتيب أبجدي: مفعل":"🔠 ترتيب أبجدي: معطل"; b.classList.toggle('active'); renderTable(); }
     
-    function quickAddStudent() { const n=document.getElementById('quickAddName').value.trim(); if(!n) return; const sc={}; SCHEMAS[currentKey].fields.forEach(f=>sc[f.id]=null); const sec=selectedSections.length>0?selectedSections[0]:"عام"; if(!dbGrades[currentKey])dbGrades[currentKey]=[]; dbGrades[currentKey].push({name:n, section:sec, scores:sc, total:0, keyScore:0}); saveData(); renderTable(); document.getElementById('quickAddName').value=""; }
+    function quickAddStudent() { 
+        const n = toEng(document.getElementById('quickAddName').value.trim()); 
+        if(!n) return; 
+        const sc={}; SCHEMAS[currentKey].fields.forEach(f=>sc[f.id]=null); 
+        const sec=selectedSections.length>0?selectedSections[0]:"عام"; 
+        if(!dbGrades[currentKey])dbGrades[currentKey]=[]; 
+        dbGrades[currentKey].push({name:n, section:sec, scores:sc, total:0, keyScore:0}); 
+        saveData(); renderTable(); document.getElementById('quickAddName').value=""; 
+    }
     
-    function importSectionStudents(sec) { if(!sec || !dbSections[currentKey][sec]) return; const lst=dbSections[currentKey][sec].split('\n').map(s=>s.trim()).filter(s=>s); const sc={}; SCHEMAS[currentKey].fields.forEach(f=>sc[f.id]=null); if(!dbGrades[currentKey])dbGrades[currentKey]=[]; let c=0; lst.forEach(n=>{ if(!dbGrades[currentKey].some(s=>s.name===n)){ dbGrades[currentKey].push({name:n, section:sec, scores:{...sc}, total:0, keyScore:0}); c++; } }); if(c>0){ if(!selectedSections.includes(sec))selectedSections.push(sec); saveData(); renderSectionTabs(); renderTable(); alert(`تم ${c}`); } document.getElementById('bulkImportSelect').value=""; }
+    function importSectionStudents(sec) { 
+        if(!sec || !dbSections[currentKey][sec]) return; 
+        const lst = dbSections[currentKey][sec].split('\n').map(s=>toEng(s.trim())).filter(s=>s); 
+        const sc={}; SCHEMAS[currentKey].fields.forEach(f=>sc[f.id]=null); 
+        if(!dbGrades[currentKey])dbGrades[currentKey]=[]; 
+        let c=0; 
+        lst.forEach(n=>{ 
+            if(!dbGrades[currentKey].some(s=>s.name===n)){ 
+                dbGrades[currentKey].push({name:n, section:sec, scores:{...sc}, total:0, keyScore:0}); c++; 
+            } 
+        }); 
+        if(c>0){ 
+            if(!selectedSections.includes(sec))selectedSections.push(sec); 
+            saveData(); renderSectionTabs(); renderTable(); alert(`تم ${c}`); 
+        } 
+        document.getElementById('bulkImportSelect').value=""; 
+    }
     
     function renderSectionTabs() {
         const c=document.getElementById('sectionTabs'); c.innerHTML='';
@@ -1267,6 +1377,7 @@
         if(dbSections[currentKey]) Object.keys(dbSections[currentKey]).forEach(s=>{ const b=document.createElement('button'); b.className=`tab-btn ${selectedSections.includes(s)?"active":""}`; b.innerText=s; b.onclick=()=>{if(selectedSections.includes(s))selectedSections=selectedSections.filter(x=>x!==s); else selectedSections.push(s); renderSectionTabs(); renderTable();}; c.appendChild(b); });
         c.appendChild(t);
     }
+
     function updateSectionDropdown() { const s=document.getElementById('bulkImportSelect'); s.innerHTML='<option value="">-- اختر شعبة --</option>'; if(dbSections[currentKey]) Object.keys(dbSections[currentKey]).forEach(k=>s.innerHTML+=`<option value="${k}">${k}</option>`); }
     function deleteItem(idx) { if(confirm("حذف؟")) { dbGrades[currentKey].splice(idx,1); saveData(); renderTable(); } }
     
@@ -1275,17 +1386,79 @@
         const st = calculateStats(data);
         const el = id => document.getElementById(id);
         if(el('statTotal')) el('statTotal').innerText = st.totalStudents;
-        ['Weak','Acc','Good','VGood','Exc'].forEach((k,i)=>el('stat'+k).innerText=st.counts[i]);
-        el('rateLow').innerText=st.lowPct+"%"; el('rateHigh').innerText=st.highPct+"%";
-        chartInstance.data.datasets[0].data=st.counts; chartInstance.update();
-        el('topList').innerHTML=st.top10.map(s=>`<div class="student-item"><span>${s.name} (${s.section})</span><b>${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('');
-        el('bottomList').innerHTML=st.bottom10.map(s=>`<div class="student-item"><span>${s.name} (${s.section})</span><b>${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('');
+        ['Weak','Acc','Good','VGood','Exc'].forEach((k,i)=> { if(el('stat'+k)) el('stat'+k).innerText = st.counts[i]; });
+        if(el('rateLow')) el('rateLow').innerText = st.lowPct + "%";
+        if(el('rateHigh')) el('rateHigh').innerText = st.highPct + "%";
+        chartInstance.data.datasets[0].data = st.counts;
+        chartInstance.update();
+        if(el('topList')) el('topList').innerHTML = st.top10.map(s => `<div class="student-item"><span>${s.name} (${s.section})</span><b style="font-family:'Segoe UI',sans-serif;">${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('');
+        if(el('bottomList')) el('bottomList').innerHTML = st.bottom10.map(s => `<div class="student-item"><span>${s.name} (${s.section})</span><b style="font-family:'Segoe UI',sans-serif;">${getStudentStats(s, SCHEMAS[currentKey]).obtained}</b></div>`).join('');
     }
     
     function openNamesModal() { document.getElementById('namesModal').classList.add('active'); document.getElementById('modalStageSelect').value=currentKey||"5-9"; loadSectionsForModal(); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    function loadSectionsForModal() { const s=document.getElementById('modalStageSelect').value, d=document.getElementById('modalSectionList'); d.innerHTML=''; if(dbSections[s])Object.keys(dbSections[s]).forEach(k=>{const b=document.createElement('div'); b.className='section-tag'; b.innerText=k; b.onclick=()=>{document.getElementById('modalSectionName').value=k; document.getElementById('modalNamesText').value=dbSections[s][k];}; d.appendChild(b);}); const n=document.createElement('div'); n.className='section-tag new'; n.innerText='+'; n.onclick=()=>{document.getElementById('modalSectionName').value="";document.getElementById('modalNamesText').value="";}; d.appendChild(n); }
-    function saveSectionNames() { const s=document.getElementById('modalStageSelect').value, n=document.getElementById('modalSectionName').value.trim(), t=document.getElementById('modalNamesText').value; if(!n) return alert("الاسم؟"); if(!dbSections[s]) dbSections[s]={}; dbSections[s][n]=t; saveData(); loadSectionsForModal(); if(s===currentKey) {updateSectionDropdown(); renderSectionTabs();} }
+    
+    function loadSectionsForModal() { 
+        const s=document.getElementById('modalStageSelect').value, d=document.getElementById('modalSectionList'); 
+        d.innerHTML=''; 
+        if(dbSections[s])Object.keys(dbSections[s]).forEach(k=>{
+            const b=document.createElement('div'); b.className='section-tag'; b.innerText=k; 
+            b.onclick=()=>{
+                document.getElementById('modalSectionName').value=k; 
+                document.getElementById('modalNamesText').value=dbSections[s][k];
+            }; 
+            d.appendChild(b);
+        }); 
+        const n=document.createElement('div'); n.className='section-tag new'; n.innerText='+'; n.onclick=()=>{document.getElementById('modalSectionName').value="";document.getElementById('modalNamesText').value="";}; d.appendChild(n); 
+    }
+    
+    function saveSectionNames() { 
+        const s = document.getElementById('modalStageSelect').value;
+        const n = toEng(document.getElementById('modalSectionName').value.trim()); 
+        const t = toEng(document.getElementById('modalNamesText').value); 
+        if(!n) return alert("الاسم؟"); 
+        if(!dbSections[s]) dbSections[s]={}; dbSections[s][n]=t; 
+        saveData(); loadSectionsForModal(); 
+        if(s===currentKey) {updateSectionDropdown(); renderSectionTabs();} 
+    }
+
+    // --- دالة حذف الشعبة المحددة ---
+    function deleteCurrentSection() {
+        const s = document.getElementById('modalStageSelect').value;
+        const n = toEng(document.getElementById('modalSectionName').value.trim()); 
+        
+        if (!n) return alert("الرجاء اختيار أو كتابة اسم الشعبة المراد حذفها.");
+        if (!dbSections[s] || !dbSections[s][n]) return alert("هذه الشعبة غير موجودة.");
+
+        if (confirm(`هل أنت متأكد من حذف الشعبة "${n}" وجميع بيانات طلابها بالكامل؟`)) {
+            // حذف الشعبة من قائمة الشعب
+            delete dbSections[s][n];
+            
+            // حذف طلاب هذه الشعبة من جميع السجلات
+            if (dbGrades[s]) dbGrades[s] = dbGrades[s].filter(st => st.section !== n);
+            if (dbBehavior[s]) dbBehavior[s] = dbBehavior[s].filter(st => st.section !== n);
+            if (dbRemedial[s]) dbRemedial[s] = dbRemedial[s].filter(st => st.section !== n);
+            if (dbEnrichment[s]) dbEnrichment[s] = dbEnrichment[s].filter(st => st.section !== n);
+
+            // إزالة الشعبة من التبويبات المحددة حالياً إذا كانت موجودة
+            selectedSections = selectedSections.filter(sec => sec !== n);
+
+            saveData();
+            loadSectionsForModal();
+            
+            // تصفير الحقول
+            document.getElementById('modalSectionName').value = "";
+            document.getElementById('modalNamesText').value = "";
+
+            if (s === currentKey) {
+                updateSectionDropdown();
+                renderSectionTabs();
+                renderTable();
+            }
+            alert("تم حذف الشعبة وجميع بياناتها بنجاح.");
+        }
+    }
+    
     function openClearModal() { document.getElementById('clearModal').classList.add('active'); }
     function executeClear(t) { document.getElementById('clearModal').classList.remove('active'); if(!confirm("أكيد؟"))return; if(t===1||t===3)dbGrades[currentKey]=[]; if(t===2||t===3)delete dbSections[currentKey]; saveData(); if(currentKey){updateSectionDropdown(); renderSectionTabs(); renderTable();} }
     function downloadBackup() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify({s:dbSections,g:dbGrades,b:dbBehavior})],{type:'application/json'})); a.download='Backup.json'; a.click(); }
