@@ -197,30 +197,26 @@
             
             /* تصميم الجدول المرن */
             table { border: 1px solid #000; width: 100% !important; border-collapse: collapse; table-layout: auto !important; margin-bottom: 0 !important; } 
-            th { border: 1px solid #000; padding: 2px !important; color: black; text-align: center; font-size: 9pt !important; background-color: #f0f0f0 !important; }
+            th { border: 1px solid #000; padding: 2px !important; color: black; text-align: center; font-size: 8.5pt !important; background-color: #f0f0f0 !important; }
             
-            /* ارتفاع الصف 24px يتسع لـ 25 طالب بالراحة في صفحة A4 */
-            td { border: 1px solid #000; padding: 2px !important; color: black; text-align: center; font-size: 10pt !important; height: 24px !important; page-break-inside: avoid; }
+            /* ارتفاع الصف 22px وتصغير الخط قليلا يتسع لـ 20 طالب بالراحة في صفحة A4 دون كسر الصفحة عضويا */
+            td { border: 1px solid #000; padding: 1px 2px !important; color: black; text-align: center; font-size: 9.5pt !important; height: 22px !important; page-break-inside: avoid; }
             
             /* تكرار الهيدر */
             thead { display: table-header-group; }
             
-            /* فواصل الصفحات (كل 25 طالب) */
+            /* فواصل الصفحات */
             tbody.section-group { page-break-before: always; break-before: page; }
             table#gradesTable tbody.section-group:first-of-type { page-break-before: auto; break-before: auto; }
             tbody.page-break-tbody { page-break-before: always; break-before: page; }
 
             /* اختصار العناوين */
-            .print-title-row th { background-color: #fff !important; border: none !important; border-bottom: 2px solid #000 !important; font-size: 1.1rem !important; padding: 4px !important; }
-            tr.section-group-header td { background-color: #e9ecef !important; color: #000 !important; border: 1px solid #000; font-weight: bold; text-align: center; font-size: 1rem !important; padding: 4px !important; }
+            .print-title-row th { background-color: #fff !important; border: none !important; border-bottom: 2px solid #000 !important; font-size: 1rem !important; padding: 2px !important; }
+            tr.section-group-header td { background-color: #e9ecef !important; color: #000 !important; border: 1px solid #000; font-weight: bold; text-align: center; font-size: 0.9rem !important; padding: 2px !important; }
             
-            /* توسيع عمود الاسم ليظهر بالكامل
-               - أخذنا 30% من عرض الصفحة
-               - منعنا التفاف النص (nowrap) حتى لا يقتطع
-               - كبرنا حجم الخط قليلاً للوضوح 
-            */
+            /* تمديد عمود الاسم والسماح بالالتفاف */
             td.name-cell { width: 35% !important; min-width: 260px !important; text-align: right !important; padding-right: 8px !important; white-space: nowrap !important; overflow: visible !important; }
-            td.name-cell .print-only { font-weight: bold; font-size: 11pt !important; display: block !important; white-space: nowrap !important; overflow: visible !important; }
+            td.name-cell .print-only { font-weight: bold; font-size: 9.5pt !important; display: block !important; white-space: nowrap !important; overflow: visible !important; }
             
             #analysisSection { display: none !important; }
             .analysis-print-container { display: block !important; }
@@ -445,7 +441,6 @@
         <div style="margin-bottom:15px;"><label>الشعبة:</label> <div id="modalSectionList" class="modal-section-list"></div> <input type="text" id="modalSectionName" placeholder="اسم الشعبة..." style="width:100%; padding:8px; border:1px solid #ddd; margin-top:5px;"></div>
         <label>الطلاب:</label><textarea id="modalNamesText"></textarea>
         <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:15px;">
-            <!-- الزر الجديد لحذف الشعبة المحددة -->
             <button class="btn btn-warning" onclick="deleteCurrentSection()">🗑️ حذف الشعبة</button>
             <button class="btn btn-accent" onclick="saveSectionNames()">💾 حفظ</button>
             <button class="btn btn-danger" onclick="document.getElementById('namesModal').classList.remove('active')">إغلاق</button>
@@ -933,7 +928,7 @@
         renderTable();
     }
 
-    // دالة بناء الجدول المعدلة للطباعة المرنة والذكية (25 طالب لكل صفحة مع تكرار العناوين)
+    // دالة بناء الجدول المعدلة للطباعة المرنة والذكية (20 طالب لكل صفحة مع تكرار العناوين)
     function renderTable() {
         const table = document.getElementById('gradesTable');
         table.innerHTML = ''; 
@@ -992,8 +987,8 @@
                 table.appendChild(tbody);
             }
 
-            // فاصل صفحة كل 25 طالب
-            if (sectionRowCount === 25) {
+            // فاصل صفحة كل 20 طالب (لضمان صفحتين فقط لـ 40 طالب وأقل)
+            if (sectionRowCount === 20) {
                 tbody = document.createElement('tbody');
                 tbody.className = "page-break-tbody";
                 table.appendChild(tbody);
@@ -1015,10 +1010,10 @@
             
             if (currentMode === 'grades') {
                 schema.fields.forEach(f => {
-                    let val = item.scores[f.id] || "";
+                    let val = (item.scores[f.id] !== null && item.scores[f.id] !== undefined && item.scores[f.id] !== "") ? item.scores[f.id] : "";
                     html += `<td>
-                                <span class="print-only grade-print-span" id="print-grade-${originalIndex}-${f.id}">${val === null ? '' : val}</span>
-                                <input type="text" inputmode="decimal" class="grade-input screen-only" id="grade-${originalIndex}-${f.id}" value="${val === null ? '' : val}" onkeydown="handleGradeNavigation(event, ${originalIndex}, '${f.id}')" onchange="updateGrade(${originalIndex}, '${f.id}', this.value)">
+                                <span class="print-only grade-print-span" id="print-grade-${originalIndex}-${f.id}">${val}</span>
+                                <input type="text" inputmode="decimal" class="grade-input screen-only" id="grade-${originalIndex}-${f.id}" value="${val}" onkeydown="handleGradeNavigation(event, ${originalIndex}, '${f.id}')" onchange="updateGrade(${originalIndex}, '${f.id}', this.value)">
                              </td>`;
                 });
                 
