@@ -940,7 +940,7 @@
         let hHtml = `<tr class="print-title-row"><th colspan="100%">${printTitle}</th></tr><tr><th style="width:30px">#</th><th style="text-align:right;">الاسم</th><th style="width:60px" class="no-print">الشعبة</th>`;
         if (currentMode === 'grades') {
             schema.fields.forEach(f => {
-                hHtml += `<th>${f.label}<br><button class="btn-mini-action no-print" onclick="giveFullMarkToAll('${f.id}')">✅</button></th>`;
+                hHtml += `<th>${f.label}<br><span style="font-size:0.85rem; color:#7f8c8d; display:inline-block; margin-top:2px;">(من ${f.max})</span><br><button class="btn-mini-action no-print" onclick="giveFullMarkToAll('${f.id}')">✅</button></th>`;
             });
             hHtml += `<th>المجموع<br>(${schema.total})</th><th>المستوى</th><th style="width:50px" class="no-print">إجراء</th></tr>`;
         } else {
